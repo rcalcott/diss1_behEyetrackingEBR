@@ -46,6 +46,7 @@ library(papaja)
 library(bibtex)
 library(itrackR)
 library(edfR)
+library(plyr)
 library(dplyr)
 library(dtplyr)
 library(ggplot2)
@@ -67,12 +68,14 @@ set.seed(42)
 # Hard-coded file pathways and experiment numbers (data paths must correspond to expNums)
 genericDataPath <- '~/Dropbox/Studies/Dissertation/output/Study' 
 expNums <- c(1,2,4) #list only those with eye data
-noEyeDataExp <- 3
+noEyeDataExp <- 3 # need to make changes below if more than one experiment with no eye data
 
 # Establish absolute performance cutoffs for inclusion
-excludeRTmax <- 2000
-excludeRTmin <- 100
-excludeRTmaxSDs <- 3
+excludeRTMax <- 1500
+excludeRTMin <- 100
+excludeRTMaxSDs <- 3
+excludeMaxErrorRateSDs <- 3
+winsorizeErrorsSD <- 3
 excludeSaccLatency <- 750
 targetHitThresh <- .75 # below this threshold, exclude subjects for not fixating the target on enough trials.
 
@@ -84,19 +87,10 @@ loadData <- function(expNum, genericDataPath) {
   load(paste(dataPath, 'eyetrackingData_byTrial.Rda', sep='')) 
   load(paste(dataPath, 'blinks.Rda', sep='')) 
   
-  allData <- merge(cleanData_behAnalyses, blinks, by='ID', all.x=FALSE, all.y=FALSE)
-  allData <- merge(allData, allEyes, by=c('ID','Block','Set','Trial'))
+  allData <- merge(cleanData_behAnalyses, blinks, by='ID', all.x=TRUE, all.y=FALSE)
+  allData <- merge(allData, allEyes, by=c('ID','Block','Set','Trial'), all.x=TRUE, all.y=FALSE)
   
   assign(paste('allData',expNum, sep=''), allData)
-}
-
-#function to load data for experiments without eyetracking data
-loadDataNoEyeData <- function(expNum, genericDataPath) {
-  assign('dataPath', paste(genericDataPath, expNum, '/', sep=''))
-  
-  load(paste(dataPath, 'cleanDataBehAnalyses.Rda', sep='')) 
-  
-  assign(paste('allData',expNum, sep=''), cleanData_behAnalyses)
 }
 
 list <- sapply(expNums, loadData, genericDataPath=genericDataPath, USE.NAMES=TRUE)
@@ -111,96 +105,169 @@ assign(paste('allData',noEyeDataExp, sep=''), cleanData_behAnalyses)
 Effective goal-driven behavior requires not only the ability to maintain task-relevant representations in working memory (WM), but also to update these representations when the situation requires. For example, imagine an individual who is searching for her friend in a crowd with the knowledge that this friend is wearing a red hat. Once she has located her friend, she learns that another friend is wearing a blue coat, and so her attentional template in working memory must be updated to blue. There is a high degree of variability in the ease with which we can update these WM representations. Whereas some states and traits promote excessive stability, resulting in perseveration on no-longer relevant representations, others give rise to excessive flexibility, which may result in task-irrelevant representations gaining access to WM. [Interestingly, many of these traits have been linked with dopamine...]. Additionally, task-specific characteristics, such as the presence of potentially distracting stimuli, determine the processes required for effective WM updating, and thus the effectiveness with which one can update WM representations and shield these new representations from distraction. From our example, how will the search for a blue coat be impacted by the presence of many red hats in the crowd, when our subject had been previously searching for a red hat? The present research explores how the presence of interference affects the ability to update WM representations, and its relationship with spontaneous eye blink rate (EBR), an index of striatal DA, with the goal of determineing the conditions under which striatal DA is most relevant to updating ability.
 
 ## Working memory updating
-Across range of tasks (e.g. task switching, attentional set-shifting), the need to update WM representations consistently incurs a performance cost in both speed and accuracy [CITE]. However, not all WM updates are equivalently costly - specific task factors modulate the degree to which performance suffers during a switch.
-First, switching is more costly when participants must ignore a previously-relevant stimulus that is presented at the same time as the target [@RogersMonsell_1995], as would be the case when having to attend blue and ignore red after previousy attending red. Furthermore, this inhibition of no-longer-relevant representations appears to be automatically triggered during WM updating [@MayrKeele_2000], indicating that updating involves not only the activation of the newly-relevant representations, but also active inhibition of those that are no longer relevant. The upshot of this inhibition is that switching back to a representation that was previously inhibited incurs a cost because individuals must overcome the inhibition to re-activate the particular representation. This process of actively disengaging from no-longer relevant representations plays a key role in a recent model of cognitive control more generally, and may explain variability in WM capacity, or the ability to hold items in WM [@ShipsteadEtAl_2016]. Thus, in situations in which individuals must update WM by switching the same set of representations (i.e. familiar stimuli), costs may arise both via perseveration on an old representation, as well as the need to overcome inhibition of a previously-irrelevant representation.
-An additional moderating factor is the predictability of the switch. When the need to update WM is completely predictable, performance improves to baseline levels only one trial following the switch. On the other hand, when switches are unpredictable, performance improvements are more gradual, and asymptote to baseline levels only after several trials following the switch [@MonsellEtAl_2003]. An open question concerns how switching between familiar stimuli affects the number of trials required to return to baseline performance following an unpredictable switch.
+Across range of tasks (e.g. task switching, attentional set-shifting), the need to update WM representations consistently incurs a performance cost in both speed and accuracy [CITE]. However, not all WM updates are equivalently costly - specific task factors modulate the degree to which performance suffers during a switch.  
+First, switching is more costly when participants must ignore a previously-relevant stimulus that is presented at the same time as the target [@RogersMonsell_1995], as would be the case when having to attend blue and ignore red after previousy attending red. Furthermore, this inhibition of no-longer-relevant representations appears to be automatically triggered during WM updating [@MayrKeele_2000], indicating that updating involves not only the activation of the newly-relevant representations, but also active inhibition of those that are no longer relevant. The upshot of this inhibition is that switching back to a representation that was previously inhibited incurs a cost because individuals must overcome the inhibition to re-activate the particular representation. This process of actively disengaging from no-longer relevant representations plays a key role in a recent model of cognitive control more generally, and may explain variability in WM capacity, or the ability to hold items in WM [@ShipsteadEtAl_2016]. Thus, in situations in which individuals must update WM by switching the same set of representations (i.e. familiar stimuli), costs may arise both via perseveration on an old representation, as well as the need to overcome inhibition of a previously-irrelevant representation.  
+An additional moderating factor is the predictability of the switch. When the need to update WM is completely predictable, performance improves to baseline levels only one trial following the switch. On the other hand, when switches are unpredictable, performance improvements are more gradual, and asymptote to baseline levels only after several trials following the switch [@MonsellEtAl_2003]. An open question concerns how switching between familiar stimuli affects the number of trials required to return to baseline performance following an unpredictable switch.  
 
 ## The role of striatal dopamine (DA) in working memory updating
-Computational models highlight the role of striatal DA in WM updating processes [@HazyEtAl_2007; @FrankEtAl_2001]. Whereas the PFC [not storage, but___], the dorsal striatum acts as a gate, controlling which representations gain access to the PFC based on which representations have predicted positive outcomes in the past [@HazyEtAl_2007]. This gate is regulated by two DA receptor subtypes: D1- and D2-Type. Phasic DA signals [from ____] activate D1 receptors, which has the downstream effect of lifting inhibition of PFC, and triggering updating of WM representations. At low striatal DA levels, D2 receptors are more active, which has the effect of inhibiting gating. Thus, whether or not WM updating occurs depends on the relative activation of the D1 and D2 pathways, which is DA-dependent.
-In addition to phasic signals, tonic DA level in striatum are also theorized to influence the relative ease of WM updating, primarily via its effects on the D2 pathway [@MaiaFrank_2011]. When tonic DA is high, the D2 pathway is less active and thus the threshold required for a phasic DA signal to trigger updating is lowered and thus WM updating should be facilitated. On the other hand, when tonic DA is low, the D2 pathway will be more active, resulting in greater inhibition of gating and thus an increased threshold for WM udpdating.
-Some empirical evidence supports this link between D2 pathway activation and WM updating. Higher D2 receptor density in ___ predicted improved reversal learning, which requires the ability to update WM representations [@GromanEtAl_2014]. Furthermore, a D2 receptor agnonist improved performance in human subjects with low tonic DA [@vanHolsteinEtAl_2011]. [find more references].
-On the other hand, there are also some inconsistent findings with respect to the relationship between tonic DA and WM updating. [Give examples]. An open question is whether tonic DA levels have different implications for WM updating depending on task properties, and in particular, whether WM updating also requires inhibition of potentially interfering familiar stimuli.
+Computational models highlight the role of striatal DA in WM updating processes [@HazyEtAl_2007; @FrankEtAl_2001]. Whereas the PFC [not storage, but___], the dorsal striatum acts as a gate, controlling which representations gain access to the PFC based on which representations have predicted positive outcomes in the past [@HazyEtAl_2007]. This gate is regulated by two DA receptor subtypes: D1- and D2-Type. Phasic DA signals [from ____] activate D1 receptors, which has the downstream effect of lifting inhibition of PFC, and triggering updating of WM representations. At low striatal DA levels, D2 receptors are more active, which has the effect of inhibiting gating. Thus, whether or not WM updating occurs depends on the relative activation of the D1 and D2 pathways, which is DA-dependent.  
+In addition to phasic signals, tonic DA level in striatum are also theorized to influence the relative ease of WM updating, primarily via its effects on the D2 pathway [@MaiaFrank_2011]. When tonic DA is high, the D2 pathway is less active and thus the threshold required for a phasic DA signal to trigger updating is lowered and thus WM updating should be facilitated. On the other hand, when tonic DA is low, the D2 pathway will be more active, resulting in greater inhibition of gating and thus an increased threshold for WM udpdating.  
+Some empirical evidence supports this link between D2 pathway activation and WM updating. Higher D2 receptor density in ___ predicted improved reversal learning, which requires the ability to update WM representations [@GromanEtAl_2014]. Furthermore, a D2 receptor agnonist improved performance in human subjects with low tonic DA [@vanHolsteinEtAl_2011]. [find more references].  
+On the other hand, there are also some inconsistent findings with respect to the relationship between tonic DA and WM updating. [Give examples]. An open question is whether tonic DA levels have different implications for WM updating depending on task properties, and in particular, whether WM updating also requires inhibition of potentially interfering familiar stimuli.  
 
 ## Spontaneous eye blink rate (EBR) as an index of striatal DA function
-The above question has been addressed by studies using spontaneous eye blink rate (EBR), which is hypothesized to be an index of tonic striatal DA tone [@JongkeesColzato_2016]. The physiological link between EBR and DA function is not yet fully understood; however EBR is predictive of D2-type receptor density and availability [@GromanEtAl_2014] and is often interpreted as an index of tonic striatal DA levels [@JongkeesColzato_2016]. [more evidence on EBR here... citations from Cools lab!].
+The above question has been addressed by studies using spontaneous eye blink rate (EBR), which is hypothesized to be an index of tonic striatal DA tone [@JongkeesColzato_2016]. The physiological link between EBR and DA function is not yet fully understood; however EBR is predictive of D2-type receptor density and availability [@GromanEtAl_2014] and is often interpreted as an index of tonic striatal DA levels [@JongkeesColzato_2016]. [more evidence on EBR here... citations from Cools lab!].  
 There are, however, inconsistent findings with respect to the relationship between DA and EBR. A recent pilot study [@SescousseEtAl_2017] used positron emission tomography (PET) to assess the relationship between striatal DA synthesis capacity and EBR. If EBR is indeed predictive of greater striatal DA levels, we may expect that higher EBR would predict greater DA synthesis capacity; however the study found no significant relationship and if anything, the trend was towards a negative relationship [@SescousseEtAl_2017]. [cite other study cited by Sescousse et al]. Thus, the relationship between EBR and DA is likely to be nuanced and may not map well onto the amount of DA that is present in the striatum.
-In spite of these inconsistencies about the precise relationship between EBR and striatal DA, EBR does consistently predict WM updating ability; however the direction of this relationship depends on the specific task used. @DreisbachEtAl_2005 used an attention set-shifting task with two updating conditions: In the Perseveration condition, updating involved shifting attention to an unfamiliar target color and ignoring a previously-relevant colour, whereas in the Learned Irrelevance condition, participants updated by shifting attention to a previously-ignored colour and ignoring a novel colour. Higher EBR predicted faster updating in the Perseveration condition, but slower updating in the Learned Irrelevance condition, and this finding has since been replicated [@MuellerEtAl_2007]. This work underscores the importance of specific task factors, such as whether the new target and distractor are novel or familiar, and their previous role in the task. However, it is not yet clear which factors are driving the results. On the one hand, it is possible that higher EBR predicts improved ability to inhibit no-longer relevant representations, which would improve performance in the Perseveration condition but may harm performance in the Learned Irrelevance condition, because it may be more difficult to overcome the stronger backwards inhibition to activate a particular task set. On the other hand, it is also possible that high EBR predicts a novelty bias, making it easier to shift attention towards novel stimuli, but also less able to ignore novel stimuli when they are not task-relevant. [Link with computational models and DA -> what could this mean?]
-In our own pilot study (*N*=61), participants performed a similar set-shifting task, which cued participants to shift their attention among 3 potential colors, all of which were present, either as distractors or target, on all trials. Thus, at each switch point, participants had to update their attentional set to attend a color that was previously a distractor and ignore a colour that was previously a target. Under these conditions, higher EBR predicted slower updating (*r*=.28, *p*=.03). Because there were no novel targets in this task, and in light of previous findings showing that higher EBR predicts less perseveration [@DreisbachEtAl_2005; @MuellerEtAl_2007], this finding suggested that perhaps participants with higher EBR had more difficulty overcoming inhibition of previously-irrelevant representations, potentially because of stronger inhibition of irrelevant information. Other work using the Stroop task has indeed shown that participants with higher EBR were better at ignoring irrelevant stimulus dimensions [@ZhangEtAl_2015]. Thus, it is possible that participants with high EBR also inhibit irrelevant task sets more strongly, which makes it more difficult to overcome to attend a target that has previously been a distractor. If EBR does indeed reflect striatal DA levels, we might expect that if this ___ was removed and things were equal, that higher EBR would predict improved updating, by lowering the threshold required to gate new task representations into the PFC.
+In spite of these inconsistencies about the precise relationship between EBR and striatal DA, EBR does consistently predict WM updating ability; however the direction of this relationship depends on the specific task used. @DreisbachEtAl_2005 used an attention set-shifting task with two updating conditions: In the Perseveration condition, updating involved shifting attention to an unfamiliar target color and ignoring a previously-relevant colour, whereas in the Learned Irrelevance condition, participants updated by shifting attention to a previously-ignored colour and ignoring a novel colour. Higher EBR predicted faster updating in the Perseveration condition, but slower updating in the Learned Irrelevance condition, and this finding has since been replicated [@MuellerEtAl_2007]. This work underscores the importance of specific task factors, such as whether the new target and distractor are novel or familiar, and their previous role in the task. However, it is not yet clear which factors are driving the results. On the one hand, it is possible that higher EBR predicts improved ability to inhibit no-longer relevant representations, which would improve performance in the Perseveration condition but may harm performance in the Learned Irrelevance condition, because it may be more difficult to overcome the stronger backwards inhibition to activate a particular task set. On the other hand, it is also possible that high EBR predicts a novelty bias, making it easier to shift attention towards novel stimuli, but also less able to ignore novel stimuli when they are not task-relevant. [Link with computational models and DA -> what could this mean?]  
+In our own pilot study (*N*=61), participants performed a similar set-shifting task, which cued participants to shift their attention among 3 potential colors, all of which were present, either as distractors or target, on all trials. Thus, at each switch point, participants had to update their attentional set to attend a color that was previously a distractor and ignore a colour that was previously a target. Under these conditions, higher EBR predicted slower updating (*r*=.28, *p*=.03). Because there were no novel targets in this task, and in light of previous findings showing that higher EBR predicts less perseveration [@DreisbachEtAl_2005; @MuellerEtAl_2007], this finding suggested that perhaps participants with higher EBR had more difficulty overcoming inhibition of previously-irrelevant representations, potentially because of stronger inhibition of irrelevant information. Other work using the Stroop task has indeed shown that participants with higher EBR were better at ignoring irrelevant stimulus dimensions [@ZhangEtAl_2015]. Thus, it is possible that participants with high EBR also inhibit irrelevant task sets more strongly, which makes it more difficult to overcome to attend a target that has previously been a distractor. If EBR does indeed reflect striatal DA levels, we might expect that if this ___ was removed and things were equal, that higher EBR would predict improved updating, by lowering the threshold required to gate new task representations into the PFC.  
 
 ## The present studies
 Using an attention shifting task, the present studies will explore how the effectiveness and time scale of WM updating varies, depending on whether individuals must inhibit interference from previously-relevant task sets. Additionally, we will compare the relationship between EBR and WM updating across these different task contexts with the aim of .
-In a series of 4 experiements, participants completed a cued attentional shifting task consisting of two updating conditions: Perseveration-Inhibition and Pure Updating. In the Perseveration-Inhibition condition, updating involved shifting the focus of attention away from a current target colour to instead attend what was previously the distractor. Thus, both target and distractor were familiar to subjects, and switch costs may be, in part, attributable to both perseveration on the old target color as well as needing to overcome backwards inhibition of the new target. In the Pure Updating condition, updating involved shifting attention to a novel target and ignoring a novel distractor, and thus switch costs cannot be attributable to interference from a previous attentional set.
-Based on the results of our pilot study, we expected that in the Perseveration-Inhibition condition, higher EBR would again predict slower WM updating. Based on the idea of EBR as an index of striatal DA levels, we additionally hypothesized that higher EBR would predict faster WM updating in the Pure Updating condition, because higher DA levels should bias the fronto-striatal network towards updating by lowering the threshold required for a phasic DA signal to trigger updating [@MaiaFrank_2011].
-It is important to note, however, that although there is much evidence for a link between striatal DA and EBR [e.g., @JongkeesColzato_2016], the specific nature of this relationship is still unknown, and as outlined above, is likely to be more complicated than a straightforward index of striatal DA levels. Thus, for the present paper, we are using EBR to determine the conditions under which striatal DA function is most relevant to WM updating; however we will not be able to draw any directional conclusions about the relationship between striatal DA tone and WM updating.
-The present studies also had the exploratory aim of determining the temporal dynamics of updating (Perseveration-Inhibition vs. Pure Updating), by examining performance as a function of the number of trials from an update, and additionally how these temporal measures are related to EBR. For the sake of transparency, we note that we did not initially intend to examine the data in this way; however the data showed that performance in this task did not immediately reach baseline levels one trial following the switch, but rather asymptoted more slowly over the course of several trials, and this is consistent with other work in which the timing of WM updating is unpredictable [@MonsellEtAl_2003].
+In a series of 4 experiements, participants completed a cued attentional shifting task consisting of two updating conditions: Perseveration-Inhibition and Pure Updating. In the Perseveration-Inhibition condition, updating involved shifting the focus of attention away from a current target colour to instead attend what was previously the distractor. Thus, both target and distractor were familiar to subjects, and switch costs may be, in part, attributable to both perseveration on the old target color as well as needing to overcome backwards inhibition of the new target. In the Pure Updating condition, updating involved shifting attention to a novel target and ignoring a novel distractor, and thus switch costs cannot be attributable to interference from a previous attentional set.  
+Based on the results of our pilot study, we expected that in the Perseveration-Inhibition condition, higher EBR would again predict slower WM updating. Based on the idea of EBR as an index of striatal DA levels, we additionally hypothesized that higher EBR would predict faster WM updating in the Pure Updating condition, because higher DA levels should bias the fronto-striatal network towards updating by lowering the threshold required for a phasic DA signal to trigger updating [@MaiaFrank_2011].  
+It is important to note, however, that although there is much evidence for a link between striatal DA and EBR [e.g., @JongkeesColzato_2016], the specific nature of this relationship is still unknown, and as outlined above, is likely to be more complicated than a straightforward index of striatal DA levels. Thus, for the present paper, we are using EBR to determine the conditions under which striatal DA function is most relevant to WM updating; however we will not be able to draw any directional conclusions about the relationship between striatal DA tone and WM updating.  
+The present studies also had the exploratory aim of determining the temporal dynamics of updating (Perseveration-Inhibition vs. Pure Updating), by examining performance as a function of the number of trials from an update, and additionally how these temporal measures are related to EBR. For the sake of transparency, we note that we did not initially intend to examine the data in this way; however the data showed that performance in this task did not immediately reach baseline levels one trial following the switch, but rather asymptoted more slowly over the course of several trials, and this is consistent with other work in which the timing of WM updating is unpredictable [@MonsellEtAl_2003].  
 An additional advantage of the present study is that participants' eye movements were tracked, which made it possible to examine the eye movements underlying performance differences across conditions and individuals. 
 
 # Experiment 1
 Experiment 1 addresses how the ease and time scale of WM updating varies depending on whether the task requires inhibition of a prior attentional set, and whether these measures are related to EBR.
 
-## Methods
-### Participants
-A power analysis based on our pilot study indicated that data from 100 participants were necessary in order to obtain statistical power of 0.8 with an alpha of .05 for the relationship between EBR and switch cost (*r*=.28). Thus, 123 students at the university of Oregon participated in this experiment for partial course credit. Eligible participants were between 18-30 years old and reported having normal or corrected-to-normal color vision. Data from 13 participants were excluded prior to analyses because of task presentation failure (2), participant withdrawal or lack of time to finish task (5), inability to track eye (1), file corruption (1), and not meeting the eligibility criteria (4). The remaining 110 participants had a mean age of [insert] and included [insert] females, [insert] males, and [insert] individual who did not report being male or female. All procedures were approved by the Committee for the Protection of Human Subjects at the University of Oregon.
-### Material
+# Method
 
-### Procedure
+```{r pull info for method of Study 1, include=FALSE}
+# Excluded Subjects - have been removed prior to data processing
+# does not meet eligbility criteria (age, colourblindness, etc.): 216, 279, 291, 307, 316
+# did not finish task: 217, 253, 263, 266, 268
+# technical issues with task: 211, 232, 275
+# couldn't track eye: 321
+# Note: ID #312 was never assigned/got skipped
 
-### Data analysis
+# demographic info
+getDemographicInfo <- function(expNum, data){
+  demogData <- data[!duplicated(data[,'ID']),]
+  assign(paste('meanAge',expNum,sep=''), mean(demogData$age))
+  assign(paste('sdAge',expNum,sep=''), sd(demogData$age))
+  assign(paste('numFemales',expNum,sep=''), sum(demogData$gender=='Female'))
+  assign(paste('numMales',expNum,sep=''), sum(demogData$gender=='Male'))
+  assign(paste('numOther',expNum,sep=''), sum(demogData$gender=='Other'))
+  output <- list(meanAge, sdAge, numFemales, numMales, numOther)
+}
+
+getDemographicInfo <- function(data){
+  demogData <- data[!duplicated(data[,'ID']),]
+  output <- list()
+  output$meanAge <- mean(demogData$age)
+  output$sdAge <- sd(demogData$age)
+  output$numFemales <-  sum(demogData$gender=='Female')
+  output$numMales <-  sum(demogData$gender=='Male')
+  output$numOther <-  sum(demogData$gender=='Other')
+  return(output)
+}
+demog1 <- getDemographicInfo(allData1)
+
+# get error/trial removal info
+getOmittedInfo <- function(data){
+  omittedInfo <- list()
+  detach(package:plyr)
+  # subjects excluded by errors
+  errors <- dplyr::group_by(data, ID) %>%
+    summarise(errorRate=mean(Error, na.rm=TRUE))
+  omittedInfo$meanErrors <- mean(errors$errorRate, na.rm=TRUE)
+  omittedInfo$sdErrors <- sd(errors$errorRate, na.rm=TRUE)
+  omittedInfo$maxErrors <- omittedInfo$meanErrors + omittedInfo$sdErrors*3
+  tooManyErrors <- filter(errors, errorRate>omittedInfo$maxErrors)
+  omittedInfo$numExclErrors <- length(unique(tooManyErrors$ID))
+  
+  # trials excluded
+  
+  return(omittedInfo)
+}
+
+omittedInfo1 <- getOmittedInfo(allData1)
+```
+## Participants
+A power analysis based on our pilot study indicated that data from 100 participants were necessary in order to obtain statistical power of 0.8 with an alpha of .05 for the relationship between EBR and switch cost (*r*=.28). Thus, 124 students at the university of Oregon participated in this experiment for partial course credit. Eligible participants were between 18-30 years old and reported having normal or corrected-to-normal color vision. Data from 14 participants were excluded prior to analyses because of task presentation failure (3), participant withdrawal or lack of time to finish task (5), inability to track eye (1), and not meeting the eligibility criteria (5). The remaining 110 participants had a mean age of `r demog1$meanAge` (*SD*=`r demog1$sdAge`) and included `r demog1$numFemales` females, `r demog1$numMales` males, and `r demog1$numOther` individual who did not report being male or female. All procedures were approved by the Committee for the Protection of Human Subjects at the University of Oregon.   
+
+## Procedure
+After providing informed consent, participants completed a brief demographic questionnaire. Participants then received instructions for the attention shifting task and completed 3 brief practice blocks (8-12 trials each). Prior to the beginning of the experiment, the eye tracker was calibrated to ensure accurate measurement of eye gaze, and this calibration was repeated after every 2 blocks of the task, for a total of 4 calibrations. After the first calibration and following the final task block, participants completed the EBR baseline period. When the task was completed, participants responded to several questionnaires and were then debriefed about the purpose of the experiment. The entire procedure lasted approximately 1 hour.  
+
+## Materials and Apparatus  
+**Attention shifting task.** The attention shifting task was designed to measure participants' ability to update their attentional set, and shield their attentional set from distraction. To this end, participants were instructed to attend and respond about whether a letter in a target color is a consonant or a vowel, while ignoring a distractor letter in an irrelevant color. Periodically, the target color shifted, and performance following this shift was used to measure updating performance.  
+
+Each set of trials began with the presentation of one of 6 possible color words (BLUE, RED, YELLOW, GREEN, ORANGE, PURPLE) for 2000ms in black text on a grey background, to indicate the target color on the upcoming set of trials (Figure 1 [insert!]). A fixation cross then appeared for 4000ms, after which the first trial of the set began. The fixation cross disappeared 100ms prior to the stimulus array, in order to encourage eye movements. The stimulus array consisted of three characters: the target letter, the distractor letter, and an irrelevant symbol in a third color. The irrelevant symbol was included to obtain an eye tracking index of general distractibility; however fixation of these stimuli was very rare [insert!], and so those data will not be analyzed further here. Characters were positioned at 3 evenly-spaced locations of 12 possible locations at a distance of 4.45 degrees from the center of the screen. The positions of the letters were never repeated on back-to-back trials. Letter stimuli were randomly selected from 5 consonants (D, F, H, L, V) and 5 vowels (A, E, I, O, U), and symbols were one of 5 non-letter characters (&, %, ?, #, @). The color of the non-letter symbol was selected from a different set of 6 colours to avoid overlap with the letter stimuli.   
+
+On a given trial, there was a 50% chance that the distractor letter would be in the same category as the target (Congruent trials, e.g., both vowels), and a 50% that the distractor would be in the opposite category (Incongruent trials, i.e. one consonant, one vowel). Target and distractor letters were never identical on a given trial.  
+As quickly as possible, participants indicated with a key press whether the target letter was a consonant or a vowel. The stimulus array remained on the screen until participant response, and then was replaced by a fixation cross for a 3500ms inter-trial interval (ITI). This longer ITI was chosen because we were also measuring pupillary responses and thus wanted to allow sufficient time for the pupil to return to baseline following each trial. Pupillometry data will not be reported here.  
+
+Each set consisted of a randomized number of between 4-6 trials, to reduce predictability of updates. Participants completed sets of trials within each of 3 Block Types: Perseveration-Inhibition, Pure Updating, and Non-Switch. During Perseveration-Inhibition blocks, the target and distractor colours traded roles at each switch, with the former target color becoming the new distractor and vice-versa. On Pure Updating blocks, on the other hand, both target and distractor colors were novel (different from the two colors in the previous set). Participants completed 3 blocks of 12 sets for both Perseveration-Inhibition and Pure Updating tasks in a randomized alternating order (i.e. either ABABAB or BABABA). Non-Switch blocks, in which the target and distractor colors remained the same from set to set were also included in order to examine the global effects of Switch on performance; however these data will not be discussed further here. There was additionally a Non-Switch block at the beginning and end of the experiment. Non-Switch blocks each contained only 6 sets and took place at the beginning and end of the experiment. Thus, in total participants completed 8 blocks of the attention shifting task, containing approximately 420 trials. [make a figure with the procedure?]
+
+**EBR Baseline.** EBR baseline periods took place immediately after the first calibration and following the final task block. Participants were instructed to relax and look at a fixation cross in the center of the screen for 2 minutes [citation for using this amount of time!].
+
+**Questionnaire Measures.** Prior to the task, participants provided their demographic information. Following the task, participants completed the Behavioral Activation and Inhibition Scales (BIS/BAS; @CarverWhite_1994), Sensitivity to Punishment and Sensitivity to Reward Questionnaire (SPSRQ; @TorrubiaEtAl_2001), and the Barratt Impulsivity Scale [@PattonEtAl_1995]. These measures were chosen because of the relevance of behavioral activation, reward sensitivity, and impulsivity to dopamine function [@CoolsEtAl_2007]. Finally, participants responded about their caffeine consumption for the day and the number of hours of sleep during the previous night, because of their potential relationship to ____.  
+
+**Apparatus.** The attention shifting task was run with Psychtoolbox in MATLAB [___]. Stimuli were presented using a Mac Mini computer and an 18'' monitor with a resolution of 1024 x 768 pixels. Participants made responses using the left and right arrow keys on a standard QWERTY keyboard.  
+
+Participants completed the task while their eyes were tracked using an Eyelink CL infrared eyetracker and using Eyelink 1000 software (Version 4.56; SR Research, Missisauga, Ontario, Canada) with a sampling rate of 1000 Hz. Participants' heads were stabilized using a chin rest located 50 cm from the eyetracker.
+
+## Data Processing and Analysis
+**Behavioral Data.** Participants performed the task with an overall error rate of `r omittedInfo1$meanErrors*100`% (*SD* = `r omittedInfo1$sdErrors*100`)%. Data from `r omittedInfo1$numExclErrors` participants were removed because of an error rate greater than `r excludeMaxErrorRateSDs` standard deviations from the group mean, leaving a sample of `r 110-omittedInfo1$numExclErrors` for the behavioral analyses. To correct for non-normality, data were transformed using the natural log (lnRT). All RTs less than `r excludeRTMin` ms, greater than `r excludeRTMax` ms, or more than `r excludeRTMaxSDs` standard deviations from the participant's mean lnRT were removed from RT analyses [include!]. [also exclude the first trial of each new block?] Error trials were also excluded from RT analyses. For error rate analyses, in cases where a participant's error rate in a particular condition was greater than `r winsorizeErrorsSD` standard deviations from the group mean, the value was winsorized to the next largest value within `r winsorizeErrorsSD` standard deviations from the group mean.  [create function for % of missing trials!]
+
+**EBR Data.** Eye blink data were processed in R [@R-base] using the itrackR [@R-itrackR] and edfR packages [@R-edfR]. The number of blinks during the EBR baseline was calculated by determining the number of missing data intervals between 50-500 ms in length during the 2-minute EBR baseline period. Although other studies [@AartsEtAl_2012; @PasEtAl_2014] have used a higher minimum threshold (100 ms), manual inspection of recorded pupillometry data prior to statistical analyses demonstrated that with the equipment used to collect this dataset, a large number of blinks are between 50-100 ms in duration. Additionally, other work has estimated that 50 ms is the lower limit for the duration that eyelids are closed during a blink [@SternEtAl_1984]. [add this paragraph refs to bib!] 
 
 
-## Results
+# Results
 
-## Discussion
+# Discussion
 
 # Experiment 2
-## Methods
+# Methods
 
-### Participants
+## Participants
 
-### Material
+## Material
 
-### Procedure
+## Procedure
 
-### Data analysis
+## Data analysis
 
 
-## Results
+# Results
 
-## Discussion
+# Discussion
 
 # Experiment 3
-## Methods
+# Methods
 
 
-### Participants
+## Participants
 
-### Material
+## Material
 
-### Procedure
+## Procedure
 
-### Data analysis
+## Data analysis
 
 
-## Results
+# Results
 
-## Discussion
+# Discussion
 
 # Experiment 4
-## Methods
+# Methods
 
 
-### Participants
+## Participants
 
-### Material
+## Material
 
-### Procedure
+## Procedure
 
-### Data analysis
+## Data analysis
 
 
-## Results
+# Results
 
-## Discussion
+# Discussion
 
 # General Discussion
 
