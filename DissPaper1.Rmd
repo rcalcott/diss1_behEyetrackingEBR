@@ -179,11 +179,37 @@ getOmittedInfo <- function(data){
   omittedInfo$numExclErrors <- length(unique(tooManyErrors$ID))
   
   # trials excluded
+  data$lnRT <- log(data$RT)
+  dataTrialsOfInterest <- data[!(data$Trial==1 & data$Set==1),]
+  dataTrialsOfInterest <- filter(dataTrialsOfInterest, Trial>4)
+  findOutliers <- group_by(dataTrialsOfInterest, ID, Trial, Congruent, Blocktype) %>%
+    summarise(meanlnRT=mean(lnRT, na.rm=TRUE),
+              sdlnRT=sd(lnRT, na.rm=TRUE))
+  findOutliers$exclude <- findOutliers$meanlnRT + excludeRTMaxSDs*findOutliers$sdlnRT
+  findOutliers$excludeMin <- findOutliers$meanlnRT - excludeRTMaxSDs*findOutliers$sdlnRT
+  dataTrialsOfInterest <- merge(dataTrialsOfInterest, findOutliers, by=c('ID', 'Trial','Congruent','Blocktype'), sort=FALSE)
+  dataTrialsOfInterest$outlierMax <- dataTrialsOfInterest$exclude-dataTrialsOfInterest$lnRT
+  dataTrialsOfInterest$outlierMin <- dataTrialsOfInterest$excludeMin-dataTrialsOfInterest$lnRT
+  
+  cleanData <- filter(dataTrialsOfInterest, RT>=excludeRTMin & RT<=excludeRTMax & outlierMax>0 & outlierMin<0)
+  omittedInfo$removedTrials <- 1-(nrow(cleanData)/nrow(dataTrialsOfInterest))
   
   return(omittedInfo)
 }
 
 omittedInfo1 <- getOmittedInfo(allData1)
+
+# get info about eye blinks
+# Participants with no EBR data:
+getBlinkInfo <- function(data) {
+  blinkInfo <- list()
+  blinkData <- data[!duplicated(data[,'ID']),]
+  blinkInfo$meanEBR <- mean(blinkData$ebr)
+  blinkInfo$sdEBR <- sd(blinkData$ebr)
+  return(blinkInfo)
+}
+
+blinkInfo1 <- getBlinkInfo(allData1)
 ```
 ## Participants
 A power analysis based on our pilot study indicated that data from 100 participants were necessary in order to obtain statistical power of 0.8 with an alpha of .05 for the relationship between EBR and switch cost (*r*=.28). Thus, 124 students at the university of Oregon participated in this experiment for partial course credit. Eligible participants were between 18-30 years old and reported having normal or corrected-to-normal color vision. Data from 14 participants were excluded prior to analyses because of task presentation failure (3), participant withdrawal or lack of time to finish task (5), inability to track eye (1), and not meeting the eligibility criteria (5). The remaining 110 participants had a mean age of `r demog1$meanAge` (*SD*=`r demog1$sdAge`) and included `r demog1$numFemales` females, `r demog1$numMales` males, and `r demog1$numOther` individual who did not report being male or female. All procedures were approved by the Committee for the Protection of Human Subjects at the University of Oregon.   
@@ -210,12 +236,23 @@ Each set consisted of a randomized number of between 4-6 trials, to reduce predi
 Participants completed the task while their eyes were tracked using an Eyelink CL infrared eyetracker and using Eyelink 1000 software (Version 4.56; SR Research, Missisauga, Ontario, Canada) with a sampling rate of 1000 Hz. Participants' heads were stabilized using a chin rest located 50 cm from the eyetracker.
 
 ## Data Processing and Analysis
-**Behavioral Data.** Participants performed the task with an overall error rate of `r omittedInfo1$meanErrors*100`% (*SD* = `r omittedInfo1$sdErrors*100`)%. Data from `r omittedInfo1$numExclErrors` participants were removed because of an error rate greater than `r excludeMaxErrorRateSDs` standard deviations from the group mean, leaving a sample of `r 110-omittedInfo1$numExclErrors` for the behavioral analyses. To correct for non-normality, data were transformed using the natural log (lnRT). All RTs less than `r excludeRTMin` ms, greater than `r excludeRTMax` ms, or more than `r excludeRTMaxSDs` standard deviations from the participant's mean lnRT were removed from RT analyses [include!]. [also exclude the first trial of each new block?] Error trials were also excluded from RT analyses. For error rate analyses, in cases where a participant's error rate in a particular condition was greater than `r winsorizeErrorsSD` standard deviations from the group mean, the value was winsorized to the next largest value within `r winsorizeErrorsSD` standard deviations from the group mean.  [create function for % of missing trials!]
+**Behavioral Data.** Participants performed the task with an overall error rate of `r omittedInfo1$meanErrors*100`% (*SD* = `r omittedInfo1$sdErrors*100`)%. Data from `r omittedInfo1$numExclErrors` participants were removed because of an error rate greater than `r excludeMaxErrorRateSDs` standard deviations from the group mean, leaving a sample of `r 110-omittedInfo1$numExclErrors` for the behavioral analyses. The first trial of each block, as well as the fifth and sixth trials of each set were excluded from all analyses. To correct for non-normality, data were transformed using the natural log (lnRT). All RTs less than `r excludeRTMin` ms, greater than `r excludeRTMax` ms, or more than `r excludeRTMaxSDs` standard deviations from the participant's mean lnRT were removed from RT analyses (`r omittedInfo1$removedTrials*100`% of trials). Error trials were excluded from RT analyses. For error rate analyses, in cases where a participant's error rate in a particular condition was greater than `r winsorizeErrorsSD` standard deviations from the group mean, the value was winsorized to the next largest value within `r winsorizeErrorsSD` standard deviations from the group mean.  
 
-**EBR Data.** Eye blink data were processed in R [@R-base] using the itrackR [@R-itrackR] and edfR packages [@R-edfR]. The number of blinks during the EBR baseline was calculated by determining the number of missing data intervals between 50-500 ms in length during the 2-minute EBR baseline period. Although other studies [@AartsEtAl_2012; @PasEtAl_2014] have used a higher minimum threshold (100 ms), manual inspection of recorded pupillometry data prior to statistical analyses demonstrated that with the equipment used to collect this dataset, a large number of blinks are between 50-100 ms in duration. Additionally, other work has estimated that 50 ms is the lower limit for the duration that eyelids are closed during a blink [@SternEtAl_1984]. [add this paragraph refs to bib!] 
+**Eye Tracking Data.** All eye tracking and eye blink data were processed in R [@R-base] using the itrackR [@R-itrackR] and edfR packages [@R-edfR]. Prior to eye tracking analysis, elliptical regions of interest (ROIs) were defined, centered on each of the 12 potential target locations, with an x radius of 45 and a y radius of 90 pixels. Data were then drift-corrected by block, using itrackR's drift_correct() function with a threshold of 15 pixels. [insert!] participants were excluded because they fixated on the target on fewer than ___% of trials, to ensure that included subjects were routinely making saccades to the target, rather than using an alternative strategy (e.g. covert attention).  
+[Describe eye tracking measures used and maybe also sanity checks!] [cross-check this section with eye tracking script!]
 
+**EBR Data.** The number of blinks during the EBR baseline was calculated by determining the number of missing data intervals between 50-500 ms in length during the 2-minute EBR baseline period. Although other studies [@AartsEtAl_2012; @PasEtAl_2014] have used a higher minimum threshold (100 ms), manual inspection of recorded pupillometry data prior to statistical analyses demonstrated that with the equipment used to collect this dataset, a large number of blinks are between 50-100 ms in duration. Additionally, other work has estimated that 50 ms is the lower limit for the duration that eyelids are closed during a blink [@SternEtAl_1984]. In the first 10 participants with usable EBR data, there was a strong correlation between blink count and manual inspection of the pupillometry data and the count produced by the 50-500ms criterion (*r*>.99, *p*<.001). EBR was then calculated by dividing the number of blinks by 2, to obtain a measure of the average number of blinks per minute. In order to keep as many participants as possible for between-subjects analyses while limiting the influence of outliers, values of EBR that were `r winsorizeErrorsSD` standard deviations from the group mean (*Mean*=`r blinkInfo1$meanEBR`, *SD*=`r blinkInfo1$sdEBR`) were winsorised. Data from [insert!] participants were not included in EBR analyses because of corruption of eye tracking data files.
+
+** Statistical analyses.** Statistical analyses used linear mixed models (LMMs) to control for random subject-level variability.  In RT analyses, observations were single trials, whereas in error rate analyses observations were aggregated performance within each condition. Observations were nested within subjects, which were modeled with fixed slopes and random intercepts [read more about LMMs to make sure terminology is correct; maybe justify choice of fixed slopes, random intercepts]. All analyses were run in R using the lmer package to compute LMMs [@R-lme4] and lmer.test package to compute statistical significance [@R-lmerTest].  
+
+Dependent variables were lnRT and error rate, and additionally ___ [for eye tracking analyses]. Independent (predictor) variables were Trial (1-4), Congruence (Congruent, Incongruent), and Block Type (Perseveration-Inhibition, Pure Updating), and EBR. Because participants' gender has been known to influence the relationship between EBR and cognitive control, we additionally entered Gender as an additional independent variable in EBR analyses. All continuous predictor variables (Trial, EBR) were centered prior to analyses. As noted above, outliers at the single-trial level (i.e. RTs) were removed from analyses, whereas outliers were at the level of Subject (i.e. EBR) or condition (i.e. error rate) were winsorized, in order to minimize the effects of outliers on the models while also retaining as many subjects as possible in the analyses.  
 
 # Results
+## Behavioral Results (N=[insert!])
+
+## Eyetracking Results (N=[insert!])
+
+## EBR Results (N=[insert!])
 
 # Discussion
 
