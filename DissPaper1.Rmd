@@ -1,6 +1,6 @@
 ---
-title             : "When does spontaneous eye blink rate predict flexible working memory updating?"
-shorttitle        : "Eye blink rate and WM updating across contexts"
+title             : "Shifting attention among familiar versus novel stimuli: Divergence in behavioral performance and eye blink predictors"
+shorttitle        : "Shifting attention among familiar and novel stimuli"
 
 author: 
   - name          : "Rebecca D. Calcott"
@@ -22,17 +22,21 @@ author_note: |
   
   Elliot Berkman, Department of Psychology, Center for Translational Neuroscience, University of Oregon.
   
+  Data and registration information for these experiments can be found on the Open Science Network (OSF) at https://osf.io/at42v/. Sample sizes and experimental methods for all experiments were registered, and a more precise preregistration including analysis plan for Experiment 4 was also posted on OSF prior to data analysis for this study. Since the initial preregistrations, we learned that some aspects of our analysis plan were not an ideal fit for the data and made changes accordingly. Deviations from the preregistration plan are noted in the manuscript. Also note that in the Preregistration, the names of the experiments are different: Study 1a is Experiment 1, Study 1b is Experiment 2, Study 1c is Experiment 3, and Study 2 is Experiment 4.
+  
+  We would like to thank Aidan Boese, Jeremy Eclarinal, Anthony Fager, Alexa Hill, Lisa Huynh, Michael Morrison and Brandon Pinkston for assistance with data collection. Additionally, we thank Jason Hubbard for technical assistance with task programming and eye tracking.
+  
   RDC received support from an NSERC Postgraduate Scholarship and an APA Dissertation Research Award. ETB received support from NIH grants R21 CA175241 and R01 CA211224.
 
 abstract: |
-  Tonic striatal dopamine (DA) modulates the relative ease of flexible updating versus stable maintenance of working memory (WM)    representations. An open question concerns the relevance of striatal dopamine when WM updating requires disengagement from a previously-relevant WM representation, in contrast to when updating requires only the activation of a new representation. The present experiments investigated this question using an attention shifting task, in which the updating context was manipulated. On Perseveration-Inhibition blocks, the target and distractor colours changed roles at each switch point, so successful performance required disengagement from an old attentional set. On Pure Updating blocks, both target and distractor colours were completely novel at each switch point, so failure to disengage from a previous attentional set could not interfere with performance. Spontaneous eye blink rate (sEBR) was used as an index of striatal DA activity, recognizing that the precise physiological basis of this relationship is not yet established. Behaviorally, attentional shifts on Perseveration-Inhibition blocks were more costly, as indexed by a greater number of errors on Incongruent trials as well as a more gradual reduction in reaction time (RT) across trials. Higher EBR predicted slower RTs on Perseveration-Inhibition blocks compared to Pure Updating blocks. These findings underscore the importance of considering updating context and potential for interference in models of striatal DA and WM updating. 
+  Tonic striatal dopamine (DA) modulates the relative ease of flexible updating versus stable maintenance of working memory (WM)    representations. An open question concerns the relevance of striatal dopamine when WM updating requires disengagement from a previously-relevant WM representation, in contrast to when updating requires only the activation of a new representation. The present experiments investigated this question using an attention shifting task, in which the updating context was manipulated. On Perseveration-Inhibition blocks, the target and distractor colours changed roles at each switch point, so successful performance required disengagement from an old attentional set. On Pure Updating blocks, both target and distractor colours were completely novel at each switch point, so failure to disengage from a previous attentional set could not interfere with performance. Spontaneous eye blink rate (EBR) was used as an index of striatal DA activity, recognizing that the precise physiological basis of this relationship is not yet established. Behaviorally, attentional shifts on Perseveration-Inhibition blocks were more costly, as indexed by a greater number of errors on Incongruent trials as well as a more gradual reduction in reaction time (RT) across trials. Higher EBR predicted slower RTs on Perseveration-Inhibition blocks compared to Pure Updating blocks. These findings underscore the importance of considering updating context and potential for interference in models of striatal DA and WM updating. 
   
-keywords          : "working memory updating, attentional flexibility, eye blink rate"
-wordcount         : "X"
+keywords          : "working memory updating, attentional flexibility, spontaneous eye blink rate"
+wordcount         : "14,942"
 
 bibliography      : ["r-references.bib"]
 
-figsintext        : yes
+figsintext        : no
 figurelist        : no
 tablelist         : no
 footnotelist      : no
@@ -71,7 +75,7 @@ set.seed(42)
 
 ```{r data setup, include=FALSE}
 # Hard-coded file pathways and experiment numbers (data paths must correspond to expNums)
-genericDataPathMac <- '~/Dropbox/Studies/Dissertation/output/Study'
+genericDataPathMac <- '~/Dropbox/Studies/Dissertation/output/osfData/Study'
 genericDataPathWindows <- 'C:/Users/LocalAdmin/Dropbox/Studies/Dissertation/output/Study'
 figPath <- '~/Dropbox/Studies/Dissertation/Drafts/Writeup2/figures/'
 
@@ -120,7 +124,7 @@ loadData <- function(expNum, genericDataPath) {
   assign(paste('allData',expNum, sep=''), allData)
 }
 
-list <- sapply(expNums, loadData, genericDataPath=genericDataPath, USE.NAMES=TRUE)
+list <- sapply(expNums, loadData, genericDataPath=genericDataPath, USE.NAMES=TRUE, simplify=FALSE)
 list2env(setNames(list, paste('allData',expNums,sep='')), envir=.GlobalEnv)
 
 #load data for experiment with no eye data:
@@ -150,7 +154,7 @@ In our own pilot study (*N*=61), participants performed a similar set-shifting t
 ## EBR as an index of tonic striatal DA function
 EBR has long been linked with DA and DA-linked cognitive functions [for a comprehensive review, see @JongkeesColzato_2016]. Human populations with altered DA function exhibit characteristic changes in EBR - patients with Parkinson's Disease, in which striatal DA neurons are lost, have lower EBR [e.g., @DeuschlGoddemeier_1998], whereas individuals with schizophrenia, which is characterized by a hyperdopaminergic state, exhibit higher EBR [e.g., @MackertEtAl_1991]. EBR is correlated predictably with treatment success and symptom severity in these populations [e.g., @AksoyEtAl_2014; @OwensEtAl_1994] . Furthermore, drugs that increase DA levels and act on DA receptors often result in EBR changes in both humans and animals [@JongkeesColzato_2016]. 
 
-However, the specific aspect of DA function that is linked with EBR is not yet well-understood. A prominent hypothesis is that EBR is related to tonic DA levels in the striatum, given its link with non-specific DA drugs and disease states with altered baseline DA. However, a recent study indicated that EBR was not positively correlated with DA synthesis capacity in the striatum, which would have been expected if EBR reflects tonic striatal DA [@SescousseEtAl_2017]. Another possibility is that spontaneous EBR predicts D2 receptor function. In monkeys, EBR predicted D2 receptor density (assessed ex vivo) and availability (assessed via PET), and was selectively responsive to a D2 receptor agonist [@GromanEtAl_2014]. In humans, however, this link between EBR and striatal D2 receptor availability was not replicated [@DangEtAl_2017]. Other work suggests that that the effects of D2 receptor drugs on EBR in humans are baseline-dependent [@CavanaghEtAl_2014]. In spite of these inconsistencies, there is still much evidence supporting a link between EBR and DA, as well as between EBR and DA-linked cognitive functions, such as WM updating ability [@JongkeesColzato_2016; @DreisbachEtAl_2005; @MuellerEtAl_2007], and ongoing work aims to more fully characterize the variance in DA function that can be explained by EBR [@SescousseEtAl_2017]. 
+However, the specific aspect of DA function that is linked with EBR is not yet well-understood. A prominent hypothesis is that EBR is related to tonic DA levels in the striatum, given its link with non-specific DA drugs and disease states with altered baseline DA. However, a recent study indicated that EBR was not positively correlated with DA synthesis capacity in the striatum, which would have been expected if EBR reflects tonic striatal DA [@SescousseEtAl_2017]. Another possibility is that spontaneous EBR predicts D2 receptor function. In monkeys, EBR predicted D2 receptor density (assessed ex vivo) and availability (assessed via PET), and was selectively responsive to a D2 receptor agonist [@GromanEtAl_2014]. In humans, however, this link between EBR and striatal D2 receptor availability was not replicated [@DangEtAl_2017]. Other work suggests that that the effects of D2 receptor drugs on EBR in humans are baseline-dependent [@CavanaghEtAl_2014]. In spite of these inconsistencies, there is still much evidence supporting a link between EBR and DA, as well as between EBR and DA-linked cognitive functions, such as WM updating ability [@JongkeesColzato_2016; @DreisbachEtAl_2005; @MuellerEtAl_2007], and ongoing work aims to more fully characterize the variance in DA function that can be explained by EBR [@SescousseEtAl_2017]. Studies such as the current investigation, which link EBR with behavioral performance, can also contribute to our understanding of EBR, by clarifying the specific task conditions in which EBR predicts behavior, and the direction of this relationship. The observed EBR-behavior link can then be compared to the relationship that would be predicted by models of DA function.  
 
 ## The present studies
 Using an attention shifting task, the present studies examined how the effectiveness of WM updating varies, depending on whether individuals must inhibit interference from previously-relevant task sets. Additionally, we compared the relationship between EBR and WM updating across these different task contexts with the aim of determining the conditions under which striatal DA function is relevant for WM updating.
@@ -159,7 +163,7 @@ In a series of 4 experiments, participants completed a cued attentional shifting
 
 Based on the results of our pilot study, we expected that in the Perseveration-Inhibition condition, higher EBR would again predict slower WM updating. If EBR is indeed an index of tonic striatal DA levels, we would additionally expect that higher EBR would predict faster WM updating in the Pure Updating condition. This latter prediction follows because higher DA levels should bias the fronto-striatal network towards updating by lowering the threshold required for a phasic DA signal to trigger updating [@MaiaFrank_2011].  
 
-It is important to note, however, that although there is much evidence for a link between striatal DA and EBR (e.g., @JongkeesColzato_2016), the specific nature of this relationship is still unknown, and as outlined above, is likely to be more complicated than a straightforward index of striatal DA levels. Thus, for the present paper, we are using EBR to test the conditions in which striatal DA function is relevant to WM updating; however we will not be able to draw any directional conclusions about the relationship between striatal DA tone and WM updating. 
+It is important to note, however, that although there is much evidence for a link between striatal DA and EBR [e.g., @JongkeesColzato_2016], the specific nature of this relationship is still unknown, and as outlined above, is likely to be more complicated than a straightforward index of striatal DA levels. Thus, for the present paper, we are using EBR to test the conditions in which striatal DA function is relevant to WM updating; however we will not be able to draw any directional conclusions about the relationship between striatal DA tone and WM updating. Rather, by determining indicate how EBR predicts flexible WM updating in the presence versus absence of familiar stimuli, the results can, in conjunction with other work [e.g., @DreisbachEtAl_2005], delineate the specific contexts in which having high EBR facilitates versus undermines WM updating. The findings can then be compared with the relationship that would be predicted if EBR indexed, for example, tonic striatal DA levels, and in the case of divergence, can inform future work on the relationship between EBR and striatal DA function. 
 
 The present studies also had the exploratory aim of determining the temporal dynamics of updating across different task contexts (Perseveration-Inhibition vs. Pure Updating), by examining performance as a function of the number of trials from an update, and additionally how these temporal measures are related to EBR. For the sake of transparency, we note that we did not initially intend to analyze the data in this way; however the data indicated that performance in this task did not immediately reach baseline levels one trial following a task set update, but rather asymptoted more gradually over the course of several trials, and this is consistent with other work in which the timing of WM updating is unpredictable [@MonsellEtAl_2003].  
 
@@ -293,7 +297,7 @@ knitr::include_graphics('taskSchematic.png')
 
 Each set of trials began with the presentation of one of 6 possible color words (BLUE, RED, YELLOW, GREEN, ORANGE, PURPLE) for 2000ms in black text on a grey background, to indicate the target color on the upcoming set of trials (Figure\ \@ref(fig:getSchematic)). A fixation cross then appeared for 4000ms, after which the first trial of the set began. The fixation cross disappeared 100ms prior to the stimulus array, in order to encourage eye movements. The stimulus array consisted of three characters: the target letter, the distractor letter, and an irrelevant symbol in a third color. The irrelevant symbol was included to obtain an eye tracking index of general distractibility; however fixation of these stimuli was very rare. Characters were positioned at 3 evenly-spaced locations of 12 possible locations at a distance of 4.45 degrees from the center of the screen. The positions of the letters were never repeated on back-to-back trials. Letter stimuli were randomly selected from 5 consonants (D, F, H, L, V) and 5 vowels (A, E, I, O, U), and symbols were one of 5 non-letter characters (&, %, ?, #, @). The color of the non-letter symbol was selected from a different set of 6 colours to avoid overlap with the letter stimuli.   
 
-On a given trial, there was a 50% chance that the distractor letter would be in the same category as the target (Congruent trials, e.g., both vowels), and a 50% that the distractor would be in the opposite category (Incongruent trials, i.e. one consonant, one vowel). Target and distractor letters were never identical on a given trial.  
+On a given trial, there was a 50% chance that the distractor letter would be in the same category as the target (Congruent trials, i.e., both vowels), and a 50% chance that the distractor would be in the opposite category (Incongruent trials, i.e. one consonant, one vowel). Target and distractor letters were never identical on a given trial.  
 As quickly as possible, participants indicated with a key press whether the target letter was a consonant or a vowel. The stimulus array remained on the screen until participant response, and then was replaced by a fixation cross for a 3500ms inter-trial interval (ITI). This longer ITI was chosen because we were also measuring pupillary responses and thus wanted to allow sufficient time for the pupil to return to baseline following each trial. Pupillometry data will not be reported here.  
 
 Each set consisted of a randomized number of between 4-6 trials, to reduce predictability of WM updating. Participants completed sets of trials within each of 3 Block Types: Perseveration-Inhibition, Pure Updating, and Non-Switch. During Perseveration-Inhibition blocks, the target and distractor colours traded roles at each shift point, with the former target color becoming the new distractor and vice-versa. On Pure Updating blocks, both target and distractor colors in the new set were different from the two colors in the previous set for task schematic. Participants completed 3 blocks of 12 sets for both Perseveration-Inhibition and Pure Updating tasks in a randomized alternating order (i.e. either ABABAB or BABABA). On Non-Switch blocks, the target and distractor colors remained the same from set to set in order to examine the global effects of Switch on performance; however data from Non-Switch blocks will not be discussed further here. Non-Switch blocks each contained only 6 sets and took place at the beginning and end of the experiment. Thus, in total participants completed 8 blocks of the attention shifting task, containing approximately 420 trials.
@@ -317,13 +321,13 @@ cleanData1_EBR <- group_by(cleanData1_EBR, ID, caffeine) %>%
 
 getFormattedResults_lm <- function(LMresults){
   colnames(LMresults) <- c('beta','se','tval','pval')
-  if (LMresults$beta<.001) {
+  if (LMresults$beta<abs(.001)) {
     LMresults$beta=formatC(LMresults$beta, format='e',digits=2)
     } else {LMresults$beta <- round(LMresults$beta, digits=2)}
-  if (LMresults$se<.001) {
+  if (LMresults$se<abs(.001)) {
     LMresults$se=formatC(LMresults$se, format='e',digits=2)
     } else {LMresults$se <- round(LMresults$se, digits=2)}
- if (LMresults$tval<.001) {
+ if (LMresults$tval<abs(.001)) {
     LMresults$tval=formatC(LMresults$tval, format='e',digits=2)
     } else {LMresults$tval <- round(LMresults$tval, digits=2)}
   LMresults$pval <- round(LMresults$pval, digits=2)
@@ -349,26 +353,27 @@ results0.1.7 <- as.data.frame(coef(summary(model0.1.7)))
 results0.1.7 <- getFormattedResults_lm(results0.1.7)
 ```
 
-**Questionnaire Measures.** Prior to the task, participants provided their demographic information. Following the task, participants completed the Behavioral Activation and Inhibition Scales (BIS/BAS; @CarverWhite_1994), Sensitivity to Punishment and Sensitivity to Reward Questionnaire (SPSRQ; @TorrubiaEtAl_2001), and the Barratt Impulsivity Scale [@PattonEtAl_1995]. These measures were chosen because of the relevance of behavioral activation, reward sensitivity, and impulsivity to dopamine function [@CoolsEtAl_2007] for the purposes of future exploratory analysis, and are not discussed further here. Finally, participants responded about their caffeine consumption for the day and the number of hours of sleep during the previous night, because of their potential relationship to EBR. The relationship between caffeine consumption and EBR did not reach significance (*B* = `r results0.1.6$beta[2]`, *SE*=`r results0.1.6$se[2]`, *t*(`r model0.1.6$df`)=`r results0.1.6$tval[2]` *p*=`r results0.1.6$pval[2]`); however participants with fewer hours of sleep had greater EBR (*B* = `r results0.1.7$beta[2]`, *SE*=`r results0.1.7$se[2]`, *t*(`r model0.1.7$df[2]`)=`r results0.1.7$tval[2]` *p*=`r results0.1.7$pval[2]`).
+**Questionnaire Measures.** Prior to the task, participants provided their demographic information. Following the task, participants completed the Behavioral Activation and Inhibition Scales [BIS/BAS; @CarverWhite_1994], Sensitivity to Punishment and Sensitivity to Reward Questionnaire [SPSRQ; @TorrubiaEtAl_2001], and the Barratt Impulsivity Scale [@PattonEtAl_1995]. These measures were chosen because of the relevance of behavioral activation, reward sensitivity, and impulsivity to dopamine function [@CoolsEtAl_2007] for the purposes of future exploratory analysis, and are not discussed further here. Finally, participants responded about their caffeine consumption for the day and the number of hours of sleep during the previous night, because of their potential relationship to EBR. The relationship between caffeine consumption and EBR did not reach significance (*B* = `r results0.1.6$beta[2]`, *SE*=`r results0.1.6$se[2]`, *t*(`r model0.1.6$df`)=`r results0.1.6$tval[2]` *p*=`r results0.1.6$pval[2]`); however participants with fewer hours of sleep had greater EBR (*B* = `r results0.1.7$beta[2]`, *SE*=`r results0.1.7$se[2]`, *t*(`r model0.1.7$df[2]`)=`r results0.1.7$tval[2]` *p*=`r results0.1.7$pval[2]`).
 
 **Apparatus.** The attention shifting task was run with Psychophysics Toolbox in MATLAB [@Brainard_1997]. Stimuli were presented using a Mac Mini computer and an 18'' monitor with a resolution of 1024 x 768 pixels. Participants made responses using the left and right arrow keys on a standard QWERTY keyboard.  
 
 Participants completed the task while their eyes were tracked using an Eyelink CL infrared eyetracker and using Eyelink 1000 software (Version 4.56; SR Research, Missisauga, Ontario, Canada) with a sampling rate of 1000 Hz. Participants' heads were stabilized using a chin rest located 50 cm from the eyetracker.
 
 ## Data Processing and Analysis
-**Behavioral Data.** Participants performed the task with an overall error rate of `r omittedInfo1$meanErrors*100`% (*SD* = `r omittedInfo1$sdErrors*100`%). Data from `r omittedInfo1$numExclErrors` participants were removed because of an error rate greater than `r excludeMaxErrorRateSDs` standard deviations from the group mean, leaving a sample of `r 110-omittedInfo1$numExclErrors` for the behavioral analyses. The first trial of each block, as well as the fifth and sixth trials of each set were excluded from all analyses. To correct for non-normality, data were transformed using the natural log (lnRT). All RTs less than `r excludeRTMin` ms, greater than `r excludeRTMax` ms, or more than `r excludeRTMaxSDs` standard deviations from the participant's mean lnRT were removed from RT analyses (`r omittedInfo1$removedTrials*100`% of trials). Error trials were excluded from RT analyses. For error rate analyses, in cases where a participant's error rate in a particular condition was greater than `r winsorizeErrorsSD` standard deviations from the group mean, the value was winsorized to the next largest value within `r winsorizeErrorsSD` standard deviations from the group mean.  
+**Behavioral Data.** Participants performed the task with an overall error rate of `r omittedInfo1$meanErrors*100`% (*SD* = `r omittedInfo1$sdErrors*100`%). Data from `r omittedInfo1$numExclErrors` participants were removed because of an error rate greater than `r excludeMaxErrorRateSDs` standard deviations from the group mean, leaving a sample of `r 110-omittedInfo1$numExclErrors` for the behavioral analyses. The first trial of each block, as well as the fifth and sixth trials of each set were excluded from all analyses. To correct for non-normality, data were transformed using the natural log (lnRT). All RTs less than `r excludeRTMin` ms, greater than `r excludeRTMax` ms, or more than `r excludeRTMaxSDs` standard deviations from the participant's mean lnRT in a given task condition were removed from RT analyses (`r omittedInfo1$removedTrials*100`% of trials). Error trials were excluded from RT analyses. For error rate analyses, in cases where a participant's error rate in a particular condition was greater than `r winsorizeErrorsSD` standard deviations from the group mean, the value was winsorized to the next largest value within `r winsorizeErrorsSD` standard deviations from the group mean.  
 
 **Eye Tracking Data.** All eye tracking and eye blink data were processed in R [@R-base] using the itrackR [@R-itrackR] and edfR packages [@R-edfR]. Prior to eye tracking analysis, elliptical regions of interest (ROIs) were defined, centered on each of the 12 potential target locations, with an x radius of 45 and a y radius of 90 pixels. Additionally, a circular ROI (radius = 65 pixels) was defined in the center of the screen, to denote the location of the central fixation cross, which disappears at trial onset. Data were then drift-corrected by block, using itrackR's drift_correct function with a threshold of 15 pixels. All fixations and saccades occurring while the target array was visible were classified according to whether they were directed towards the ROIs containing the target, distractor, or non-letter object.
 
 Prior to hypothesis-driven analyses of eye tracking data, there were additional quality-control checks performed, to ensure the validity of fixation and saccade data as an index of participants' underlying mental processes. First, `r length(gazeInfo1$excludeTarPct)` participants who fixated on the target on fewer than `r targetHitThresh*100`% of trials were excluded from hypothesis-driven eye tracking analyses, so that analyses were performed only on subjects who were routinely making saccades to the target and not using an alternative strategy (e.g. covert attention). Data from an additional `r blinkInfo1$numExcluded` participants were excluded because of corrupted eye tracking data. Additionally, it was possible that as participants became more accustomed to the task, they adopted a more efficient covert attention strategy, and thus we first checked whether the tendency to fixate on the target changed over the course of the experiment. A second possibility was that high performers might have used a covert attention strategy, rather than fixating the target on each trial, so we additionally tested the relationship between target fixation probability and overall performance indices (RT, error rate).  
 
-Analyses of interest examined the tendency for participants to fixate on the distractor before the target, and also the time of participants' first saccade towards the target. The former measure was used as an explicit index of distractibility by the irrelevant target, because it indicates that participants looked first at the distractor rather than the target. The proportion of trials on which participants fixated on the distractor ROI prior to the target ROI was calculated for each experimental condition, and error trials were included in these analyses. We additionally examined participants' tendency to fixate the always-irrelevant non-letter character ROI; however this measure did not differ across conditions, perhaps because of a very low fixation rate overall (`r round(gazeInfo1$meanNeutPct, digits=2)*100`%), and thus are not reported further here. The latter measure, timing of participants' first saccade to the target, was used as a more implicit index of participants' hesitation to move their eyes towards the target, and was examined only for correct trials in which participants fixated the target prior to the distractor. Saccade time was defined as the time from stimulus onset at which participants initiated a their first saccade to the target. 
+Analyses of interest examined the tendency for participants to fixate on the distractor before the target, and also the time of participants' first saccade towards the target. The former measure was used as an explicit index of distractibility by the irrelevant target, because it indicates that participants looked first at the distractor rather than the target. The proportion of trials on which participants fixated on the distractor ROI prior to the target ROI was calculated for each experimental condition, and error trials were included in these analyses. We additionally examined participants' tendency to fixate the always-irrelevant non-letter character ROI; however this measure did not differ across conditions, perhaps because of a very low fixation rate overall (`r round(gazeInfo1$meanNeutPct, digits=2)*100`%), and thus these data are not reported further here. The latter measure, timing of participants' first saccade to the target, was used as a more implicit index of participants' hesitation to move their eyes towards the target, and was examined only for correct trials in which participants fixated the target prior to the distractor. Saccade time was defined as the time from stimulus onset at which participants initiated a their first saccade to the target. 
 
-**EBR Data.** Blinks were identified in the pupillometry data using the noise-based algorithm described in @HershmanEtAl_2018. Events in which the pupil size was reduced to 0 were counted as blinks when they were at least 100ms removed from other blink events [@HershmanEtAl_2018] and had a duration between 50-500ms. Although other studies [@AartsEtAl_2012; @PasEtAl_2014] have used a higher minimum blink duration (100 ms), manual inspection of recorded pupillometry data prior to statistical analyses demonstrated that with the equipment used to collect this dataset, a large number of blinks are between 50-100 ms in duration. Additionally, other work has estimated that 50 ms is the lower limit for the duration that eyelids are closed during a blink [@SternEtAl_1984]. EBR was then calculated by dividing the number of blinks by 2, to obtain a measure of the average number of blinks per minute. In order to keep as many participants as possible for between-subjects analyses while limiting the influence of outliers, values of EBR that were `r winsorizeErrorsSD` standard deviations from the group mean (*Mean*=`r blinkInfo1$meanEBR`, *SD*=`r blinkInfo1$sdEBR`) were winsorised. As noted above, eye tracking data from `r blinkInfo1$numExcluded` participants were corrupted, and thus these participants were not included in EBR analyses.  
+**EBR Data.** Blinks were identified in the pupillometry data using the noise-based algorithm described in @HershmanEtAl_2018. This classification of blinks diverged from our preregistered plan to use the blinks automatically classified by the eye tracker. Events in which the pupil size was reduced to 0 were counted as blinks when they were at least 100ms removed from other blink events [@HershmanEtAl_2018] and had a duration between 50-500ms. Although other studies [@AartsEtAl_2012; @PasEtAl_2014] have used a higher minimum blink duration (100 ms), manual inspection of recorded pupillometry data prior to statistical analyses demonstrated that with the equipment used to collect this dataset, a large number of blinks were between 50-100 ms in duration. Additionally, other work has estimated that 50 ms is the lower limit for the duration that eyelids are closed during a blink [@SternEtAl_1984]. EBR was then calculated by dividing the number of blinks by 2, to obtain a measure of the average number of blinks per minute. In order to keep as many participants as possible for between-subjects analyses while limiting the influence of outliers, values of EBR that were `r winsorizeErrorsSD` standard deviations from the group mean (*Mean*=`r blinkInfo1$meanEBR`, *SD*=`r blinkInfo1$sdEBR`) were winsorised. As noted above, eye tracking data from `r blinkInfo1$numExcluded` participants were corrupted, and thus these participants were not included in EBR analyses.  
 
 **Statistical analyses.** Statistical analyses used linear mixed models (LMMs) to control for random subject-level variability.  In RT analyses, observations were single trials, whereas in error rate analyses observations were aggregated performance within each condition. Observations were nested within subjects, which were modeled with fixed slopes and random intercepts. All analyses were run in R using the lmer package to compute LMMs [@R-lme4] and lmer.test package to compute statistical significance [@R-lmerTest].  
 
-Dependent variables were lnRT and error rate, and additionally probability of distractor fixation and the target saccade time for eye tracking analyses. Independent variables were Trial (1-4), Congruence (Congruent, Incongruent), Block Type (Perseveration-Inhibition, Pure Updating), and EBR. Because participants' gender has been known to influence the relationship between EBR and cognitive control, we additionally entered Gender as an additional independent variable in EBR analyses. All continuous predictor variables (Trial, EBR) were centered prior to analyses. As noted above, outliers at the single-trial level (i.e. RTs) were removed from analyses, whereas outliers were at the level of Subject (i.e. EBR) or condition (i.e. error rate) were winsorized, in order to minimize the effects of outliers on the models while also retaining as many subjects as possible in the analyses.  
+Dependent variables were lnRT and error rate, and additionally probability of distractor fixation and the target saccade time for eye tracking analyses. Independent variables were Trial (1-4), Congruence (Congruent, Incongruent), Block Type (Perseveration-Inhibition, Pure Updating), and EBR. We note that at the time of preregistration, we had planned to analyze Trial as a categorical variable (Switch vs. Non-Switch trials); however we later learned that given the unpredictability of updating timing, performance asymptotes more slowly following a switch (Monsell et al., 2003), and thus it was a better fit to include Trial as a continuous variable. Additionally, we chose to exclude Trials 5 and 6 from analyses, so that all sets would have an equal number of trials in the analysis, and also because RTs on these later trials showed a pattern of increased RTs, perhaps because participants were anticipating an upcoming shift and were distracted.  
+Because participants' gender has been known to influence the relationship between EBR and cognitive control, we entered Gender as an additional independent variable in EBR analyses. All continuous predictor variables (Trial, EBR) were centered prior to analyses. In the preregistration, we proposed testing quadratic effects of EBR on behavioral and eye tracking indices. However, these analyses did not yield a consistent pattern of results and introduced a high degree of variance into the data, so they were left out of this manuscript. As noted above, outliers at the single-trial level (i.e. RTs) were removed from analyses, whereas outliers were at the level of Subject (i.e. EBR) or condition (i.e. error rate) were winsorized, in order to minimize the effects of outliers on the models while also retaining as many subjects as possible in the analyses.  
 
 # Results
 ## Behavioral Results (*N*=`r Nbeh1`)
@@ -443,10 +448,10 @@ results1.1.1 <- as.data.frame(coef(summary(model1.1.1)))
 
 getFormattedResults <- function(LMMresults){
   colnames(LMMresults) <- c('beta','se','df','tval','pval')
-  LMMresults$beta <- ifelse(LMMresults$beta<.01, 
+  LMMresults$beta <- ifelse(LMMresults$beta<abs(.01), 
                             formatC(LMMresults$beta, format='e',digits=2),
                             round(LMMresults$beta, digits=2))
-  LMMresults$se <- ifelse(LMMresults$se<.01, 
+  LMMresults$se <- ifelse(LMMresults$se<abs(.01), 
                             formatC(LMMresults$se, format='e',digits=2),
                             round(LMMresults$se, digits=2))
   LMMresults$df <- round(LMMresults$df, digits=2)
@@ -539,7 +544,7 @@ results1.1.2 <- getFormattedResults(results1.1.2)
 ```
 **RT.** Behavioral effects of the task conditions on RT were estimated by entering trial-by-trial log-transformed RTs nested within subjects into an LMM. The null model with no predictors had an intra-class correlation of `r icc0.1.1`, indicating a sufficient degree of within-subject clustering to justify the use of mixed models for analysis.  
 
-The full model tested the effects of Trial (1-4), Block Type (Perseveration-Inhibition vs. Pure Updating), and Congruence (Congruent vs. Incongruent) and their interactions on RT. As expected, there was a significant main effect of Trial (*B* = `r results1.1.1$beta[2]`, *SE*=`r results1.1.1$se[2]`, *t*(`r results1.1.1$df[2]`)=`r results1.1.1$tval[2]` *p*=`r results1.1.1$pval[2]`), indicating that participants responded more slowly on earlier trials (i.e. trials closer to a switch) than on later trials. There was additionally a main effect of Block Type (*B* = `r results1.1.1$beta[3]`, *SE*=`r results1.1.1$se[3]`, *t*(`r results1.1.1$df[3]`)=`r results1.1.1$tval[3]` *p*=`r results1.1.1$pval[3]`), with participants responding more slowly on Perseveration-Inhibition blocks. The interaction between Trial and Block Type also reached significance (*B* = `r results1.1.1$beta[5]`, *SE*=`r results1.1.1$se[5]`, *t*(`r results1.1.1$df[5]`)=`r results1.1.1$tval[5]` *p*=`r results1.1.1$pval[5]`). As shown in Figure\ \@ref(fig:figModela), immediately following a switch, RTs are slower for both Block Types; however they decline more quickly over the course of a set compared to Perseveration-Inhibition blocks. This effect appears to be driven by Congruent trials; however the 3-way interaction that also included Congruence did not reach significance (*B* = `r results1.1.1$beta[8]`, *n.s.*). Post-hoc analyses in which Congruent and Incongruent trials were examined separately indicated a significant interaction on Congruent (*B* = `r results1.1.1a$beta[4]`, *SE*=`r results1.1.1a$se[4]`, *t*(`r results1.1.1a$df[4]`)=`r results1.1.1a$tval[4]` *p*=`r results1.1.1a$pval[4]`), but not Incongruent (*B* = `r results1.1.1b$beta[4]`, *SE*=`r results1.1.1b$se[4]`, *t*(`r results1.1.1b$df[4]`)=`r results1.1.1b$tval[4]` *p*=`r results1.1.1b$pval[4]`) trials.
+The full model tested the effects of Trial (1-4), Block Type (Perseveration-Inhibition vs. Pure Updating), and Congruence (Congruent vs. Incongruent) and their interactions on RT. As expected, there was a significant main effect of Trial (*B* = `r results1.1.1$beta[2]`, *SE*=`r results1.1.1$se[2]`, *t*(`r results1.1.1$df[2]`)=`r results1.1.1$tval[2]` *p*=`r results1.1.1$pval[2]`), indicating that participants responded more slowly on earlier trials (i.e. trials closer to a switch) than on later trials. There was additionally a main effect of Block Type (*B* = `r results1.1.1$beta[3]`, *SE*=`r results1.1.1$se[3]`, *t*(`r results1.1.1$df[3]`)=`r results1.1.1$tval[3]` *p*=`r results1.1.1$pval[3]`), with participants responding more slowly on Perseveration-Inhibition blocks. The interaction between Trial and Block Type also reached significance (*B* = `r results1.1.1$beta[5]`, *SE*=`r results1.1.1$se[5]`, *t*(`r results1.1.1$df[5]`)=`r results1.1.1$tval[5]` *p*=`r results1.1.1$pval[5]`). As shown in Figure\ \@ref(fig:figModela), immediately following a switch, RTs were slower for both Block Types; however they decline more quickly over the course of a set on Pure Updating compared to Perseveration-Inhibition blocks. 
 
 The main effect of Congruence did not approach significance (*B* = `r results1.1.1$beta[4]`, *n.s.*), however there was a marginally significant interaction between Trial and Congruence (*B* = `r results1.1.1$beta[6]`, *SE*=`r results1.1.1$se[6]`, *t*(`r results1.1.1$df[6]`)=`r results1.1.1$tval[6]` *p*=`r results1.1.1$pval[6]`), indicating that incongruence costs increased at later points in a set.  
 
@@ -590,16 +595,23 @@ convertFigValues_RT <- function(figDat) {
 
 figDat1.1.1 <- convertFigValues_RT(figDat1.1.1)
 
-p=ggplot(figDat1.1.1, aes(x=Trial, y=RT, shape=Blocktype))+
-  geom_line(aes(x=Trial, y=RT, linetype=Blocktype)) +
-  facet_grid(.~Congruent) +
+figDat1.1.1 <- group_by(figDat1.1.1, Trial, Blocktype) %>%
+  summarise(meanRT=mean(RT, na.rm=TRUE),
+            meanploRT=mean(ploRT, na.rm=TRUE),
+            meanphiRT=mean(phiRT, na.rm=TRUE),
+            meantloRT=mean(tloRT, na.rm=TRUE),
+            meanthiRT=mean(thiRT, na.rm=TRUE))
+
+p=ggplot(figDat1.1.1, aes(x=Trial, y=meanRT, shape=Blocktype))+
+  geom_line(aes(x=Trial, y=meanRT, linetype=Blocktype)) +
   scale_linetype_discrete(name='Block Type') +
   scale_shape_discrete(name='Block Type') +
-  labs(x='Trial', y='RT (ms)')
-p+theme_apa()+geom_pointrange(aes(ymin = ploRT, ymax = phiRT))
+  labs(x='Trial', y='RT (ms)') +
+  coord_cartesian(ylim=c(640,860))
+p+theme_apa()+geom_pointrange(aes(ymin = meanploRT, ymax = meanphiRT))
 ```
 
-**Error Rate.** The null model for error rate had an ICC of `r icc0.1.2`. In the full model, there was a significant effect of Congruence (*B* = `r results1.1.1$beta[4]`, *SE*=`r results1.1.1$se[4]`, *t*(`r results1.1.1$df[4]`)=`r results1.1.1$tval[4]` *p*=`r results1.1.1$pval[4]`), with participants making more errors on Incongruent versus Congruent trials. The only other effect of note was an interaction between Congruence and Block Type (*B* = `r results1.1.1$beta[7]`, *SE*=`r results1.1.1$se[7]`, *t*(`r results1.1.1$df[7]`)=`r results1.1.1$tval[7]` *p*=`r results1.1.1$pval[7]`). As shown in Figure\ \@ref(fig:figModelb), incongruence costs were larger on Perseveration-Inhibition blocks compared to Pure Updating blocks. All other main effects and interactions did not reach significance.
+**Error Rate.** The null model for error rate had an ICC of `r icc0.1.2`. In the full model, there was a significant effect of Congruence (*B* = `r results1.1.2$beta[4]`, *SE*=`r results1.1.2$se[4]`, *t*(`r results1.1.2$df[4]`)=`r results1.1.2$tval[4]` *p*=`r results1.1.2$pval[4]`), with participants making more errors on Incongruent versus Congruent trials. The only other effect of note was an interaction between Congruence and Block Type (*B* = `r results1.1.2$beta[7]`, *SE*=`r results1.1.2$se[7]`, *t*(`r results1.1.2$df[7]`)=`r results1.1.2$tval[7]` *p*=`r results1.1.2$pval[7]`). As shown in Figure\ \@ref(fig:figModelb), incongruence costs were larger on Perseveration-Inhibition blocks compared to Pure Updating blocks. All other main effects and interactions did not reach significance.
 
 (ref:capModelb) Model estimates for error rate across conditions of the attention shifting task in Experiment 1. Error bars represent the 95% confidence interval (CI). There was a significant interaction between Block Type and Congruence, which indicated that participants were more prone to making errors on Incongruent trials of Perseveration-Inhibition blocks.
 
@@ -641,14 +653,29 @@ convertFigValues_ER <- function(figDat) {
 }
 
 figDat1.1.2 <- convertFigValues_ER(figDat1.1.2)
+figDat1.1.2 <- group_by(figDat1.1.2, Blocktype, Congruent) %>%
+  summarise(meanErate=mean(eRate, na.rm=TRUE),
+            meanplo=mean(plo, na.rm=TRUE),
+            meanphi=mean(phi, na.rm=TRUE),
+            meantlo=mean(tlo, na.rm=TRUE),
+            meanthi=mean(thi, na.rm=TRUE))
 
-p=ggplot(figDat1.1.2, aes(x=Trial, y=eRate, shape=Congruent))+
-  geom_line(aes(x=Trial, y=eRate, linetype=Congruent)) +
-  facet_grid(.~Blocktype) +
-  scale_linetype_discrete(name='Congruent') +
-  scale_shape_discrete(name='Congruent') +
-  labs(x='Trial', y='Error Rate (%)')
-p+theme_apa()+geom_pointrange(aes(ymin = plo, ymax = phi))
+limits = aes(ymax = meanphi, ymin=meanplo)
+dodge = position_dodge(width=0.9)
+
+s=ggplot(figDat1.1.2, aes(x = Blocktype, y = meanErate, fill = Congruent))+
+  geom_bar(stat='identity', position=dodge)+
+  geom_errorbar(limits, position=dodge, width=0)+
+  scale_fill_manual(values=c('grey53','grey25'),
+                    name="Congruence",
+                    breaks=c("Congruent", "Incongruent"),
+                    labels=c("Congruent", "Incongruent")) +
+  ylab('Error Rate (ms)')+
+  xlab('Block Type') +
+  coord_cartesian(ylim=c(0,15))
+
+
+s+theme_apa()
 
 ```
 
@@ -876,6 +903,7 @@ results4.1.1 <- as.data.frame(coef(summary(model4.1.1)))
 results4.1.1 <- getFormattedResults(results4.1.1)
 
 ```
+
 **Quality Checks.** To determine whether the likelihood of fixating the target decreased over the course of the experiment, a model predicting target fixation probability from Block of the task was run. There was indeed a significant reduction in target fixation over the course of the experiment (*B* = `r results0.1.3$beta[2]`, *SE*=`r results0.1.3$se[2]`, *t*(`r results0.1.3$df[2]`)=`r results0.1.3$tval[2]` *p*=`r results0.1.3$pval[2]`). Next, we tested the relationship between target fixation probability and overall task performance, to determine whether high-performing participants used a more efficient covert attention strategy. The relationship between RT and target fixation probability did not reach significance, although it was in the negative direction (*B* = `r results0.1.4$beta[2]`, *SE*=`r results0.1.4$se[2]`, *t*(`r model0.1.4$df.residual`)=`r results0.1.4$tval[2]` *p*=`r results0.1.4$pval[2]`). There was additionally a marginally significant negative relationship between error rate and target fixation probability, indicating that participants who made fewer errors were more likely to fixate the target (*B* = `r results0.1.5$beta[2]`, *SE*=`r results0.1.5$se[2]`, *t*(`r model0.1.5$df.residual`)=`r results0.1.5$tval[2]` *p*=`r results0.1.5$pval[2]`). Taken together, these results suggest that although participants fixated the target less frequently later in the task, the tendency to fixate the target was, if anything, predictive of faster and more accurate performance, rather than poorer performance. 
 
 **Distractor Fixation Probability.** The probability that participants fixated on the distractor prior to the target was used as an explicit index of distractibility. The null model had an ICC of `r icc0.1.6`, indicating the presence of between-subject variability in distractor fixation tendency. In the prediction model, Block Type was a significant predictor of distractor fixation probability (*B* = `r results3.1.1$beta[3]`, *SE*=`r results3.1.1$se[3]`, *t*(`r results3.1.1$df[3]`)=`r results3.1.1$tval[3]` *p*=`r results3.1.1$pval[3]`): participants were more likely to fixate on the distractor before the target on Perseveration-Inhibition blocks. There was additionally a marginally significant main effect of Trial (*B* = `r results3.1.1$beta[2]`, *SE*=`r results3.1.1$se[2]`, *t*(`r results3.1.1$df[2]`)=`r results3.1.1$tval[2]` *p*=`r results3.1.1$pval[2]`), showing a trend towards more distractor fixations on earlier trials in a set. No other main effects or interactions approached significance.
@@ -1038,7 +1066,7 @@ results11.1.1 <- getFormattedResults(results11.1.1)
 
 (ref:capModelc) Model estimates of reaction time (RT) as a function of EBR across different Block Types in Experiment 1. Error bars represent the 95% confidence interval (CI). The interaction between EBR and Block Type indicates that the RT cost of the Perseveration-Inhibition blocks is greater for subjects with higher EBR.
 
-```{r figModelc, echo=FALSE, message=FALSE, out.width='100%', fig.cap='(ref:capModelc)'}
+```{r figModelc, echo=FALSE, message=FALSE, include=FALSE, out.width='100%', fig.cap='(ref:capModelc)'}
 
 getFigDat_EBR_Study1 <- function(model) {
   
@@ -1099,7 +1127,15 @@ p=ggplot(figDat5.1.1, aes(x=ebr, y=meanRT, linetype=Blocktype))+
 p+theme_apa()+geom_pointrange(aes(ymin = meanploRT, ymax = meanphiRT))
 ```
 
-**RT.** EBR was examined to determine the potential involvement of striatal DA in updating of WM representations across different contexts. There was no main effect of EBR on RT (*t*(`r results5.1.1$df[5]`)=`r results5.1.1$tval[5]` *p*=*n.s.*); however there was an interaction between EBR and Block Type (*B* = `r results5.1.1$beta[10]`, *SE*=`r results5.1.1$se[10]`, *t*(`r results5.1.1$df[10]`)=`r results5.1.1$tval[10]` *p*=`r results5.1.1$pval[10]`). As shown in Figure\ \@ref(fig:figModelc), higher EBR predicts a greater gap in RT between the slower Perseveration-Inhibition and the relatively faster Pure Updating blocks.  All other effects involving EBR did not reach significance.  
+(ref:capEBRresults) Model estimates of reaction time (RT) as a function of EBR across different Block Types in A) Experiment 1 and B) Experiment 4. Error bars represent the 95% confidence interval (CI). The interaction between EBR and Block Type indicates that the RT cost of the Perseveration-Inhibition blocks is greater for subjects with higher EBR.
+
+```{r getEBRfigs, echo=FALSE, out.width='80%', fig.cap='(ref:capEBRresults)'}
+
+knitr::include_graphics('EBRresults.png')
+
+```
+
+**RT.** EBR was examined to determine the potential involvement of striatal DA in updating of WM representations across different contexts. There was no main effect of EBR on RT (*t*(`r results5.1.1$df[5]`)=`r results5.1.1$tval[5]` *p*=*n.s.*); however there was an interaction between EBR and Block Type (*B* = `r results5.1.1$beta[10]`, *SE*=`r results5.1.1$se[10]`, *t*(`r results5.1.1$df[10]`)=`r results5.1.1$tval[10]` *p*=`r results5.1.1$pval[10]`). As shown in Figure\ \@ref(fig:getEBRfigs)A, higher EBR predicted a greater gap in RT between the slower Perseveration-Inhibition and the relatively faster Pure Updating blocks.  All other effects involving EBR did not reach significance.  
 
 **RT with gender (*N*=`r Nebr1`).** Because the relationship between EBR and cognitive control is often modulated by gender [@JongkeesColzato_2016], we also examined whether the effects differed between males and females. In this sample, females (*M*=`r blinksByGender$meanEBR[1]`, *SD*=`r blinksByGender$sdEBR[1]`) had a significantly higher EBR than males (*M*=`r blinksByGender$meanEBR[2]`, *SD*=`r blinksByGender$sdEBR[2]`; *t*(`r round(gd$parameter, digits=2)`)=`r round(gd$statistic, digits=2)`, *p*=`r round(gd$p.value, digits=3)`). When gender was entered into the prediction model, the EBR by Block Type interaction still reached statistical significance (*B* = `r results6.1.1$beta[11]`, *SE*=`r results6.1.1$se[11]`, *t*(`r results6.1.1$df[11]`)=`r results6.1.1$tval[11]` *p*=`r results6.1.1$pval[11]`), and this effect was not modulated by gender, as evidenced by the lack of a 3-way interaction with gender (*t*(`r results6.1.1$df[25]`)=`r results6.1.1$tval[25]` *p*=*n.s.*). All other effects involving gender did not reach significance.
 
@@ -1109,7 +1145,7 @@ p+theme_apa()+geom_pointrange(aes(ymin = meanploRT, ymax = meanphiRT))
 
 (ref:capModeld) Model estimates of distractor fixation probability as a function of EBR across different Block Types and Trials of a block in Experiment 1. Error bars represent the 95% confidence interval (CI). The interaction between EBR, Block Type and Trial was marginally significant, and suggests although participants tended to make fewer distractor fixations over the course of a set, participants with low EBR did not show this improvement on Perseveration-Inhibition blocks.
 
-```{r figModeld, echo=FALSE, message=FALSE, out.width='100%', fig.cap='(ref:capModeld)'}
+```{r figModeld, echo=FALSE, message=FALSE, include=FALSE, out.width='100%', fig.cap='(ref:capModeld)'}
 
 getFigDat_EBR_df_Study1 <- function(model, blinkInfo) {
   ebrLow <- 0-blinkInfo$sdEBR
@@ -1170,7 +1206,7 @@ p=ggplot(figDat7.1.1, aes(x=Trial, y=meandf, linetype=ebr, shape=ebr))+
 p+theme_apa()+geom_pointrange(aes(ymin = meanplo, ymax = meanphi))
 ```
 
-**Distractor Fixation Probability (*N*=`r NebrGaze1`)** We next examined how EBR interacted with the eye tracking measures. In both models predicting distractor fixation probability, the interaction between EBR, Trial, and Block Type approached significance (without gender: *B* = `r results7.1.1$beta[13]`, *SE*=`r results7.1.1$se[13]`, *t*(`r results7.1.1$df[13]`)=`r results7.1.1$tval[13]` *p*=`r results7.1.1$pval[13]` with gender: *B* = `r results8.1.1$beta[18]`, *SE*=`r results7.1.1$se[18]`, *t*(`r results8.1.1$df[18]`)=`r results8.1.1$tval[18]` *p*=`r results8.1.1$pval[18]`). As shown in Figure\ \@ref(fig:figModeld), participants with low EBR had, if anything, a numerically greater tendency to fixate on the distractor in both conditions. However, these EBR-linked differences emerged early in a set for Pure Updating blocks and late in a set for Perseveration-Inhibition blocks. There were no other EBR-linked predictors of distractor fixation probability in the full model.  
+**Distractor Fixation Probability (*N*=`r NebrGaze1`)** We next examined how EBR interacted with the eye tracking measures. In both models predicting distractor fixation probability, the interaction between EBR, Trial, and Block Type approached significance (without gender: *B* = `r results7.1.1$beta[13]`, *SE*=`r results7.1.1$se[13]`, *t*(`r results7.1.1$df[13]`)=`r results7.1.1$tval[13]` *p*=`r results7.1.1$pval[13]` with gender: *B* = `r results8.1.1$beta[18]`, *SE*=`r results7.1.1$se[18]`, *t*(`r results8.1.1$df[18]`)=`r results8.1.1$tval[18]` *p*=`r results8.1.1$pval[18]`). Participants with low EBR had, if anything, a numerically greater tendency to fixate on the distractor in both conditions. However, these EBR-linked differences emerged early in a set for Pure Updating blocks and late in a set for Perseveration-Inhibition blocks. There were no other EBR-linked predictors of distractor fixation probability in the full model. 
 
 Given that in the RT analyses, EBR interacted with Block Type, we additionally ran post-hoc models examining the effects of only Block Type, Trial, and EBR on distractor fixation probability (i.e. collapsing across Congruent and Incongruent trials to increase statistical power), in order to determine whether the tendency to fixate on a distractor stimulus might underlie the results. However, no effects of note reached significance in these models.
 
@@ -1241,7 +1277,7 @@ Eye gaze indices indicated that participants were more likely to first fixate on
 
 The relationship between EBR and task performance also varied as a function of Block Type. Here, higher EBR predicted slower responding on Perseveration-Inhibition blocks relative to Pure Updating blocks. Interestingly, this EBR-RT relationship on Perseveration-Inhibition blocks cannot be explained by distractor fixation tendency, which was not greater for participants with high EBR; however it may be related to saccade time, which was also slower on Perseveration-Inhibition blocks for participants with high EBR. This finding is unsurprising given that saccade time is correlated with RT (*r*=.37, *p*<.001); however it may suggest that the behavioral effects of EBR on WM updating are mediated via hesitation, rather than by overt fixations on distractors.
 
-A key limitation of this experiment is that all color cues instructed participants to switch. Thus, it is not possible to determine whether the observed effects of Trial are related to the process of updating one's attentional set, or rather to the process of reading a cue. In all following experiments, half of cues were be Non-Switch cues, in order to disentangle this alternative explanations for our findings. An additional limitation is that the EBR measurement was quite brief (2 minutes), whereas a longer interval is typically advised for EBR data collection [@JongkeesColzato_2016]. Although there is some evidence that EBR recorded early in an interval closely corresponds with EBR later in an interval [e.g., @DangEtAl_2017], a longer recording interval is likely to be more reliable [@JongkeesColzato_2016]. This limitation is addressed later, in Experiment 4.
+A key limitation of this experiment is that all color cues instructed participants to switch. Thus, it is not possible to determine whether the observed effects of Trial are related to the process of updating one's attentional set, or rather to the process of reading a cue. In all following experiments, half of cues were Non-Switch cues, in order to disentangle this alternative explanations for our findings. An additional limitation is that the EBR measurement was quite brief (2 minutes), whereas a longer interval is typically advised for EBR data collection [@JongkeesColzato_2016]. Although there is some evidence that EBR recorded early in an interval closely corresponds with EBR later in an interval [e.g., @DangEtAl_2017], a longer recording interval is likely to be more reliable [@JongkeesColzato_2016]. This limitation is addressed later, in Experiment 4.
 
 
 
@@ -1309,7 +1345,7 @@ Ngaze2 <- Nbeh2 - length(gazeInfo2$excludeTarPct)
 Thirty-seven students at the University of Oregon participated in this experiment for partial course credit. Eligibility criteria were the same as for Experiment 1. One participant was excluded prior to data processing because of failure to follow task instructions. The remaining participants included `r demog2$numFemales` females and `r demog2$numMales` males, and had a mean age of `r demog2$meanAge` (*SD*=`r demog2$sdAge`).
 
 ## Procedure
-The procedure was very similar to that of Experiment 1. After providing informed consent, participants completed a brief questionnaire about demographic information, caffeine use, and previous night's sleep. They then completed an EBR baseline period, followed by the attention shifting task, and ending with an additional baseline recording. The eyetracker was calibrated after every 2 blocks, and participants were given the option to take a break at these points. The experiment lasted approximately 2 hours.
+The procedure was very similar to that of Experiment 1. After providing informed consent, participants completed a brief questionnaire about demographic information, caffeine use, and previous night's sleep. They then completed an EBR baseline period, followed by the attention shifting task, and ended with an additional baseline recording. The eyetracker was calibrated after every 2 blocks, and participants were given the option to take a break at these points. The experiment lasted approximately 2 hours.
 
 ## Materials and Apparatus
 **Attention Shifting Task.** The experimental task was identical to the task used in Experiment 1 with two exceptions. First, Non-Switch cues were included, so that half of sets began with a color word that was the same as the previous set (Non-Switch Sets) and the other half began with a color word that was different (Switch Sets). Each block still contained 12 sets of 4-6 trials. In order to maintain a sufficient number of trials per condition, the number of blocks was doubled so that there were 6 of each Perseveration-Inhibition and Pure Updating blocks, for a total of approximately 780 trials.  
@@ -1456,7 +1492,7 @@ results1.2.2 <- getFormattedResults(results1.2.2)
 
 (ref:capModelf) Model estimates of reaction time (RT) across conditions of the attention shifting task in Experiment 2. Error bars represent the 95% confidence interval (CI). There was a significant interaction between Block Type, Set Type, and Trial, indicating that on Switch Sets, RTs were slower to asymptote on Perseveration-Inhibition blocks compared to Pure Updating blocks.
 
-```{r figModelf, echo=FALSE, message=FALSE, out.width='100%', fig.cap='(ref:capModelf)'}
+```{r figModelf, echo=FALSE, message=FALSE, include=FALSE, out.width='100%', fig.cap='(ref:capModelf)'}
 
 getFigDat_RT <- function(model) {
   
@@ -1489,23 +1525,42 @@ getFigDat_RT <- function(model) {
 figDat1.2.1 <- getFigDat_RT(model1.2.1)
 figDat1.2.1 <- convertFigValues_RT(figDat1.2.1)
 
-p=ggplot(figDat1.2.1, aes(x=Trial, y=RT, shape=switchSet))+
-  geom_line(aes(x=Trial, y=RT, linetype=switchSet)) +
-  facet_grid(Congruent~Blocktype) +
+figDat1.2.1 <- group_by(figDat1.2.1, Trial, switchSet, Blocktype) %>%
+  summarise(meanRT=mean(RT, na.rm=TRUE),
+            meanploRT=mean(ploRT, na.rm=TRUE),
+            meanphiRT=mean(phiRT, na.rm=TRUE),
+            meantloRT=mean(tloRT, na.rm=TRUE),
+            meanthiRT=mean(thiRT, na.rm=TRUE))
+
+p=ggplot(figDat1.2.1, aes(x=Trial, y=meanRT, shape=switchSet))+
+  geom_line(aes(x=Trial, y=meanRT, linetype=switchSet)) +
+  facet_grid(.~Blocktype) +
   scale_linetype_discrete(name='Set Type') +
   scale_shape_discrete(name='Set Type') +
-  labs(x='Trial', y='RT (ms)')
-p+theme_apa()+geom_pointrange(aes(ymin = ploRT, ymax = phiRT))
+  labs(x='Trial', y='RT (ms)') +
+  coord_cartesian(ylim=c(640,860))
+p+theme_apa()+geom_pointrange(aes(ymin = meanploRT, ymax = meanphiRT))
 ```
+
+(ref:capRTresults) Model estimates of reaction time (RT) across conditions of the attention shifting task in A) Experiment 2, B) Experiment 3, and C) Experiment 4. Error bars represent the 95% confidence interval (CI). There was a significant interaction between Block Type, Set Type, and Trial, indicating that on Switch Sets, RTs were slower to asymptote on Perseveration-Inhibition blocks compared to Pure Updating blocks.
+
+
+```{r getRTfigs, echo=FALSE, out.width='100%', fig.cap='(ref:capRTresults)'}
+
+knitr::include_graphics('RTresults.png')
+
+```
+
+
 **RT.** As for Experiment 1, RT data were analyzed using mixed models with trials nested within subjects. The null model had an ICC of `r icc0.2.1`.  
   
 The prediction model indicated main effects of Trial (*B* = `r results1.2.1$beta[2]`, *SE*=`r results1.2.1$se[2]`, *t*(`r results1.2.1$df[2]`)=`r results1.2.1$tval[2]` *p*=`r results1.2.1$pval[2]`) and Block Type (*B* = `r results1.2.1$beta[3]`, *SE*=`r results1.2.1$se[3]`, *t*(`r results1.2.1$df[3]`)=`r results1.2.1$tval[3]` *p*=`r results1.2.1$pval[3]`) - similar to Experiment 1, RTs were slower on earlier trials and Perseveration-Inhibition blocks. There was additionally a significant main effect of Set Type (*B* = `r results1.2.1$beta[4]`, *SE*=`r results1.2.1$se[4]`, *t*(`r results1.2.1$df[4]`)=`r results1.2.1$tval[4]` *p*=`r results1.2.1$pval[4]`), which indicated, that participants responded more slowly when they had recently switched their attentional set. The main effect of distractor Congruence also reached significance in this experiment (*B* = `r results1.2.1$beta[5]`, *SE*=`r results1.2.1$se[5]`, *t*(`r results1.2.1$df[5]`)=`r results1.2.1$tval[5]` *p*=`r results1.2.1$pval[5]`), in contrast to Experiment 1.  
   
-As expected, there was an interaction between Trial and Set Type (*B* = `r results1.2.1$beta[7]`, *SE*=`r results1.2.1$se[7]`, *t*(`r results1.2.1$df[7]`)=`r results1.2.1$tval[7]` *p*=`r results1.2.1$pval[7]`), which reflects a switch cost: RTs were slower on earlier trials of Switch Sets. Critically, the 3-way interaction between Trial, Set Type, and Block Type was also significant (*B* = `r results1.2.1$beta[12]`, *SE*=`r results1.2.1$se[12]`, *t*(`r results1.2.1$df[12]`)=`r results1.2.1$tval[12]` *p*=`r results1.2.1$pval[12]`). As in Experiment 1, RTs in Pure Updating blocks decline sharply over the course of Sets in which participants have recently switched, compared to Perseveration-Inhibition blocks (see Figure\ \@ref(fig:figModelf). Interestingly, here we also observe that RTs immediately following a switch are initially higher on Pure Updating blocks compared to Perseveration-Inhibition blocks. Critically, this pattern was observed only on Switch Sets, indicating that it is driven by switching, rather than seeing the colour cue.
+As expected, there was an interaction between Trial and Set Type (*B* = `r results1.2.1$beta[7]`, *SE*=`r results1.2.1$se[7]`, *t*(`r results1.2.1$df[7]`)=`r results1.2.1$tval[7]` *p*=`r results1.2.1$pval[7]`), which reflects a switch cost: RTs were slower on earlier trials of Switch Sets. Critically, the 3-way interaction between Trial, Set Type, and Block Type was also significant (*B* = `r results1.2.1$beta[12]`, *SE*=`r results1.2.1$se[12]`, *t*(`r results1.2.1$df[12]`)=`r results1.2.1$tval[12]` *p*=`r results1.2.1$pval[12]`). As in Experiment 1, RTs in Pure Updating blocks decline sharply over the course of Sets in which participants have recently switched, compared to Perseveration-Inhibition blocks (see Figure\ \@ref(fig:getRTfigs)A). Interestingly, here we also observe that RTs immediately following a switch are initially higher on Pure Updating blocks compared to Perseveration-Inhibition blocks. Critically, this pattern was observed only on Switch Sets, indicating that it is driven by switching, rather than by simply the presence of a colour cue.
   
 (ref:capModelg) Model estimates of error rate across conditions of the attention shifting task in Experiment 2. Error bars represent the 95% confidence interval (CI). There was a significant interaction between Block Type, Set Type, and Congruence, such that participants made more errors on Incongruent trials of Perseveration-Inhibition blocks, on Sets in which the target color has recently switched.
 
-```{r figModelg, echo=FALSE, message=FALSE, out.width='100%', fig.cap='(ref:capModelg)'}
+```{r figModelg, echo=FALSE, message=FALSE, include=FALSE, out.width='100%', fig.cap='(ref:capModelg)'}
 
 getFigDat_ER <- function(model) {
   
@@ -1539,19 +1594,46 @@ figDat1.2.2 <- getFigDat_ER(model1.2.2)
 
 figDat1.2.2 <- convertFigValues_ER(figDat1.2.2)
 
-p=ggplot(figDat1.2.2, aes(x=Trial, y=eRate, shape=Congruent))+
-  geom_line(aes(x=Trial, y=eRate, linetype=Congruent)) +
-  facet_grid(switchSet~Blocktype) +
-  scale_linetype_discrete(name='Congruence') +
-  scale_shape_discrete(name='Congruence') +
-  labs(x='Trial', y='Error Rate (%)')
-p+theme_apa()+geom_pointrange(aes(ymin = plo, ymax = phi))
+figDat1.2.2 <- group_by(figDat1.2.2, Blocktype, Congruent, switchSet) %>%
+  summarise(meanErate=mean(eRate, na.rm=TRUE),
+            meanplo=mean(plo, na.rm=TRUE),
+            meanphi=mean(phi, na.rm=TRUE),
+            meantlo=mean(tlo, na.rm=TRUE),
+            meanthi=mean(thi, na.rm=TRUE))
+
+levels(figDat1.2.2$switchSet) <- gsub(" ", "\n", levels(figDat1.2.2$switchSet))
+
+
+limits = aes(ymax = meanphi, ymin=meanplo)
+dodge = position_dodge(width=0.9)
+
+s=ggplot(figDat1.2.2, aes(x = switchSet, y = meanErate, fill = Congruent))+
+  geom_bar(stat='identity', position=dodge)+
+  facet_grid(.~Blocktype) +
+  geom_errorbar(limits, position=dodge, width=0)+
+  scale_fill_manual(values=c('grey53','grey25'),
+                    name="Congruence",
+                    breaks=c("Congruent", "Incongruent"),
+                    labels=c("Congruent", "Incongruent")) +
+  ylab('Error Rate (ms)')+
+  xlab('Block Type') +
+  coord_cartesian(ylim=c(0,15))
+
+s+theme_apa()
+
+```
+
+(ref:capERresults) Model estimates of error rate across conditions of the attention shifting task in A) Experiment 2, B) Experiment 3, and C) Experiment 4. Error bars represent the 95% confidence interval (CI). There was a significant interaction between Block Type, Set Type, and Congruence, such that participants made more errors on Incongruent trials of Perseveration-Inhibition blocks, on Sets in which the target color has recently switched.
+
+```{r getERfigs, echo=FALSE, out.width='100%', fig.cap='(ref:capERresults)'}
+
+knitr::include_graphics('ERresults.png')
 
 ```
 
 **Error Rate** The null model for error rate had an ICC of `r icc0.2.2`. As in Experiment 1, there was a main effect of Congruence (*B* = `r results1.2.2$beta[5]`, *SE*=`r results1.2.2$se[5]`, *t*(`r results1.2.2$df[5]`)=`r results1.2.2$tval[5]` *p*=`r results1.2.2$pval[5]`), with participants making more errors on Incongruent trials. The main effect of Set Type also reached significance (*B* = `r results1.2.2$beta[4]`, *SE*=`r results1.2.2$se[4]`, *t*(`r results1.2.2$df[4]`)=`r results1.2.2$tval[4]` *p*=`r results1.2.2$pval[4]`), as participants made more errors on Switch Sets. There was additionally a switch cost in error rate, as indexed by the significant interaction between Trial and Switch Set (*B* = `r results1.2.2$beta[7]`, *SE*=`r results1.2.2$se[7]`, *t*(`r results1.2.2$df[7]`)=`r results1.2.2$tval[7]` *p*=`r results1.2.2$pval[7]`).  
 
-There were also several noteworthy high-level interactions in the model. First, the interaction between Block Type, Set Type, and Congruence (*B* = `r results1.2.2$beta[15]`, *SE*=`r results1.2.2$se[15]`, *t*(`r results1.2.2$df[15]`)=`r results1.2.2$tval[15]` *p*=`r results1.2.2$pval[15]`) reached significance (Figure \@ref(fig:figModelg)). This result is analogous to the findings of Experiment 1. In particular, participants made more errors on Incongruent trials on Perseveration-Inhibition blocks compared to Pure Updating blocks, and this relationship was observable only on Switch Sets. The interaction between Trial, Block Type and Set Type also reached significance (*B* = `r results1.2.2$beta[12]`, *SE*=`r results1.2.2$se[12]`, *t*(`r results1.2.2$df[12]`)=`r results1.2.2$tval[12]` *p*=`r results1.2.2$pval[12]`). Although this finding is not consistent with Experiment 1, it does correspond to the RT finding that performance improves more sharply over the course of Switch Sets in Pure Updating blocks compared to Perseveration-Inhibition blocks, in this case indicated by a declining error rate. Finally, the 3-way interaction between Trial, Set Type and Block Type was significant (*B* = `r results1.2.2$beta[14]`, *SE*=`r results1.2.2$se[14]`, *t*(`r results1.2.2$df[14]`)=`r results1.2.2$tval[14]` *p*=`r results1.2.2$pval[14]`). Here, Switch Set error rates declined more sharply on Congruent, compared to Incongruent trials. 
+There were also several noteworthy high-level interactions in the model. First, the interaction between Block Type, Set Type, and Congruence (*B* = `r results1.2.2$beta[15]`, *SE*=`r results1.2.2$se[15]`, *t*(`r results1.2.2$df[15]`)=`r results1.2.2$tval[15]` *p*=`r results1.2.2$pval[15]`) reached significance (Figure \@ref(fig:getERfigs)A). This result is analogous to the findings of Experiment 1. In particular, participants made more errors on Incongruent trials on Perseveration-Inhibition blocks compared to Pure Updating blocks, and this relationship was observable only on Switch Sets. The interaction between Trial, Block Type and Set Type also reached significance (*B* = `r results1.2.2$beta[12]`, *SE*=`r results1.2.2$se[12]`, *t*(`r results1.2.2$df[12]`)=`r results1.2.2$tval[12]` *p*=`r results1.2.2$pval[12]`). Although this finding is not consistent with Experiment 1, it does correspond to the RT finding that performance improves more sharply over the course of Switch Sets in Pure Updating blocks compared to Perseveration-Inhibition blocks, in this case indicated by a declining error rate. Finally, the 3-way interaction between Trial, Set Type and Block Type was significant (*B* = `r results1.2.2$beta[14]`, *SE*=`r results1.2.2$se[14]`, *t*(`r results1.2.2$df[14]`)=`r results1.2.2$tval[14]` *p*=`r results1.2.2$pval[14]`). Here, Switch Set error rates declined more sharply on Congruent, compared to Incongruent trials. 
 
 ## Eye Tracking Results  
 ```{r Study 2 eyetracking results, include=FALSE}
@@ -1691,7 +1773,7 @@ results4.2.1 <- getFormattedResults(results4.2.1)
 
 (ref:capModelh) Model estimates of target saccade time across conditions of the attention shifting task in Experiment 2. Error bars represent the 95% confidence interval (CI). The interaction between Congruence and Trial reached margnial significance, suggesting that on Congruent trials, participants make faster saccades to the target as a function of Trial, whereas on Incongruent trials, participants are, in most conditions, slower to make their first saccade to the target.
 
-```{r figModelh, echo=FALSE, message=FALSE, out.width='100%', fig.cap='(ref:capModelh)'}
+```{r figModelh, echo=FALSE, message=FALSE, include=FALSE, out.width='100%', fig.cap='(ref:capModelh)'}
 
 getFigDat_ST <- function(model) {
   
@@ -1737,20 +1819,22 @@ p=ggplot(figDat4.2.1, aes(x=Trial, y=firstTarSacc_relOnsetTime, shape=Congruent)
   facet_grid(switchSet~Blocktype) +
   scale_linetype_discrete(name='Congruence') +
   scale_shape_discrete(name='Congruence') +
-  labs(x='Trial', y='Time of First Saccade to Target (ms)')
+  labs(x='Trial', y='Time of First Saccade to Target (ms)') +
+  coord_cartesian(ylim=c(220,290))
 p+theme_apa()+geom_pointrange(aes(ymin = plo, ymax = phi))
 ```
-**Saccade Time.** The null model had an ICC of `r icc0.2.7`. The time of participants' first saccade to the target was marginally faster on later compared to earlier trials in a set (*B* = `r results4.2.1$beta[2]`, *SE*=`r results4.2.1$se[2]`, *t*(`r results4.2.1$df[2]`)=`r results4.2.1$tval[2]` *p*=`r results4.2.1$pval[2]`). In contrast with the findings of Experiment 1, the effect of Block Type did not approach significance here (*t*(`r results4.2.1$df[3]`)=`r results4.2.1$tval[3]` *p*=*n.s.*). The only other effect of note was a marginally significant interaction between Trial and Congruence (*B* = `r results4.2.1$beta[9]`, *SE*=`r results4.2.1$se[9]`, *t*(`r results4.2.1$df[9]`)=`r results4.2.1$tval[9]` *p*=`r results4.2.1$pval[9]`). As shown in Figure\ \@ref(fig:figModelh), saccade time on Congruent trials decreases as a function of Trial, whereas in most cases saccade time for on Incongruent trials increases across sets. 
+
+**Saccade Time.** The null model had an ICC of `r icc0.2.7`. The time of participants' first saccade to the target was marginally faster on later compared to earlier trials in a set (*B* = `r results4.2.1$beta[2]`, *SE*=`r results4.2.1$se[2]`, *t*(`r results4.2.1$df[2]`)=`r results4.2.1$tval[2]` *p*=`r results4.2.1$pval[2]`). In contrast with the findings of Experiment 1, the effect of Block Type did not approach significance here (*t*(`r results4.2.1$df[3]`)=`r results4.2.1$tval[3]` *p*=*n.s.*). The only other effect of note was a marginally significant interaction between Trial and Congruence (*B* = `r results4.2.1$beta[9]`, *SE*=`r results4.2.1$se[9]`, *t*(`r results4.2.1$df[9]`)=`r results4.2.1$tval[9]` *p*=`r results4.2.1$pval[9]`). Here, saccade time on Congruent trials decreased as a function of Trial, whereas in most cases saccade time for on Incongruent trials increased across sets. 
 
 # Discussion  
-The inclusion of Non-Switch Sets in Experiment 2 yielded results that were largely consistent with those of Experiment 1. With respect to RTs, participants again showed a pattern of steeper decline following a Switch on Pure Updating compared to Perseveration-Inhibition Blocks. This effect was observed only on Switch Sets, indicating that the effect is driven by the act of upating an attentional set, rather than by simply observing an attentional cue. Unlike in Experiment 1, RTs on the trial immediately following a switch were slower in Pure Updating Blocks, indicating a larger immediate switch cost in this condition. Furthermore, this effect was evident on both Congruent and Incongruent trials, unlike in Experiment 1. With respect to errors, as in Experiment 1, participants were more likely to make errors on Perseveration-Inhibition Blocks, and this effect was also specific to Switch Sets. There were additional interactions involving the Switch Set factor which do not clearly correspond with results from Experiment 1, and will be re-examined in follow-up experiments.  
+The inclusion of Non-Switch Sets in Experiment 2 yielded results that were largely consistent with those of Experiment 1. With respect to RTs, participants again showed a pattern of steeper decline following a Switch on Pure Updating compared to Perseveration-Inhibition Blocks. This effect was observed only on Switch Sets, indicating that the effect is driven by the act of upating an attentional set, rather than by simply observing an attentional cue. Unlike in Experiment 1, RTs on the trial immediately following a switch were slower in Pure Updating Blocks, indicating a larger immediate switch cost in this condition. With respect to errors, as in Experiment 1, participants were more likely to make errors on Perseveration-Inhibition Blocks, and this effect was also specific to Switch Sets. There were additional interactions involving the Switch Set factor which do not clearly correspond with results from Experiment 1, and will be compared with results of follow-up experiments.  
 
 Consistent with Experiment 1, participants were also more likely to fixate the distractor letter on Perseveration-Inhibition blocks, and the lack of an interaction with Trial suggests that this susceptibility persisted over the course of a set. Switch Sets also predicted greater susceptibility to distractor fixation, which is consistent with expectations. Unlike in the prior experiment, participants were no more likely to fixate on the distractor on early versus late trials in a set. Additionally, task effects on saccade time were less noteworthy here. It is possible that the smaller sample size in this experiment can explain these divergences from Experiment 1; thus it was important to re-run these analyses in a study with both Non-Switch cues and a larger sample (Experiment 4). 
 
 Taken together, these findings indicate that on Perseveration-Inhibition blocks, participants are slower to adopt the new attentional set, which results in slower responding and more errors, even several trials following the update.
 
 # Experiment 3
-Experiment aimed to address the importance of task timing for the effects observed on the attention shifting task. The experiments described here had an additional aim of determining the pupillary correlates of attentional shifting across task contexts (results to be reported elsewhere). Because the delayed nature of the pupillary response, we included a long inter-trial interval (3500 ms) to allow sufficient time for the pupil to return to baseline following each trial. As a result, the attention shifting task had a slower pace than other tasks that have been used to assess attentional flexibility. For example, @DreisbachGoschke_2004 had a 1500 ms interval between the end of a trial and the stimuli for the following trial. Consequentially, it is possible that slowing the task altered the balance of cognitive processes at work, by introducing the need to remain vigilant across pauses between task stimuli. Thus, Experiment 3 was conducted with a faster ITI in order to determine whether the observed behavioral are still present in a faster-paced task. 
+Experiment 3 aimed to address the importance of task timing for the effects observed on the attention shifting task. The experiments described here had an additional aim of determining the pupillary correlates of attentional shifting across task contexts (results to be reported elsewhere). Because the delayed nature of the pupillary response, we included a long inter-trial interval (3500 ms) to allow sufficient time for the pupil to return to baseline following each trial. As a result, the attention shifting task had a slower pace than other tasks that have been used to assess attentional flexibility. For example, @DreisbachGoschke_2004 had a 1500 ms interval between the end of a trial and the stimuli for the following trial. Consequentially, it is possible that slowing the task altered the balance of cognitive processes at work, by introducing the need to remain vigilant across pauses between task stimuli. Thus, Experiment 3 was conducted with a faster ITI in order to determine whether the observed behavioral are still present in a faster-paced task. 
 
 # Method
 ```{r pull info for method of Study 3, include=FALSE}
@@ -1772,7 +1856,7 @@ Nbeh3 <- length(unique(allData3$ID))
 Participants were 39 University of Oregon students who received partial course credit. Data from 2 participants were not included because of insufficient time to complete the experiment, leaving `r Nbeh3` participants, with a mean age of `r demog3$meanAge` (*SD*=`r demog3$sdAge`; `r demog3$numFemales` Females).
 
 ## Procedure
-The procedure was identical to that for Experiment 2, except that participants performed the task without eyetracking, and in a separate room from the experimenter. Additionally, because of the shortened ITI, the experiment was shorter, lasting only approximately 1 hour.
+The procedure was identical to that for Experiment 2, except that participants performed the task without eyetracking, and in a separate room from the experimenter. Additionally, because of the shortened ITI, the experiment was briefer, lasting only approximately 1 hour.
 
 ## Materials and Apparatus
 **Attention Shifting Task.** The task used in this experiment was similar to that used in Experiment 2, except that it was modified to have an ITI of 1500ms, instead of 3500ms. The interval between the color word cues and the first trial of each set remained the same at 4000ms. As in Experiment 2, cues could signal either the need to switch target colors or to continue attending the same target color. Stimulus arrays remained on the screen until participant response, as in Experiment 1.  
@@ -1862,50 +1946,75 @@ results1.3.2 <- getFormattedResults(results1.3.2)
 
 (ref:capModeli) Model estimates of (RT) across conditions of the attention shifting task in Experiment 3. Error bars represent the 95% confidence interval (CI). Even with a faster ITI, the interaction between Block Type, Set Type, and Trial replicated here: On Switch Sets, RTs were slower to asymptote on Perseveration-Inhibition blocks compared to Pure Updating blocks.
 
-```{r figModeli, echo=FALSE, message=FALSE, out.width='100%', fig.cap='(ref:capModeli)'}
+```{r figModeli, echo=FALSE, message=FALSE, include=FALSE, out.width='100%', fig.cap='(ref:capModeli)'}
 
 figDat1.3.1 <- getFigDat_RT(model1.3.1)
 figDat1.3.1 <- convertFigValues_RT(figDat1.3.1)
 
-p=ggplot(figDat1.3.1, aes(x=Trial, y=RT, shape=switchSet))+
-  geom_line(aes(x=Trial, y=RT, linetype=switchSet)) +
-  facet_grid(Congruent~Blocktype) +
+figDat1.3.1 <- group_by(figDat1.3.1, Trial, switchSet, Blocktype) %>%
+  summarise(meanRT=mean(RT, na.rm=TRUE),
+            meanploRT=mean(ploRT, na.rm=TRUE),
+            meanphiRT=mean(phiRT, na.rm=TRUE),
+            meantloRT=mean(tloRT, na.rm=TRUE),
+            meanthiRT=mean(thiRT, na.rm=TRUE))
+
+p=ggplot(figDat1.3.1, aes(x=Trial, y=meanRT, shape=switchSet))+
+  geom_line(aes(x=Trial, y=meanRT, linetype=switchSet)) +
+  facet_grid(.~Blocktype) +
   scale_linetype_discrete(name='Set Type') +
   scale_shape_discrete(name='Set Type') +
-  labs(x='Trial', y='RT (ms)')
-p+theme_apa()+geom_pointrange(aes(ymin = ploRT, ymax = phiRT))
+  labs(x='Trial', y='RT (ms)') +
+  coord_cartesian(ylim=c(640,860))
+p+theme_apa()+geom_pointrange(aes(ymin = meanploRT, ymax = meanphiRT))
 ```
 
 **RT.** The null model had an ICC of `r icc0.3.1`. In the prediction model, there were main effects of Trial (*B* = `r results1.3.1$beta[2]`, *SE*=`r results1.3.1$se[2]`, *t*(`r results1.3.1$df[2]`)=`r results1.3.1$tval[2]` *p*=`r results1.3.1$pval[2]`) and Set Type (*B* = `r results1.3.1$beta[4]`, *SE*=`r results1.3.1$se[4]`, *t*(`r results1.3.1$df[4]`)=`r results1.3.1$tval[4]` *p*=`r results1.3.1$pval[4]`), qualified by a Trial x Set Type interaction (*B* = `r results1.3.1$beta[7]`, *SE*=`r results1.3.1$se[7]`, *t*(`r results1.3.1$df[7]`)=`r results1.3.1$tval[7]` *p*=`r results1.3.1$pval[7]`), which indicates a switch cost: participants were slower on trials that occur soon after an attentional shift. Interestingly, in this experiment there was no main effect of Block Type (*t*(`r results1.3.1$df[3]`)=`r results1.3.1$tval[3]` *n.s.*), nor of Congruence (*t*(`r results1.3.1$df[5]`)=`r results1.3.1$tval[5]` *n.s.*).  
 
-The 3-way interaction between Trial, Set Type and Block Type from thee previous two experiments was replicated (*B* = `r results1.3.1$beta[12]`, *SE*=`r results1.3.1$se[12]`, *t*(`r results1.3.1$df[12]`)=`r results1.3.1$tval[12]` *p*=`r results1.3.1$pval[12]`). As shown in Figure\ \@ref(fig:figModeli), following an attention shift, RTs are initially slower but decline more steeply on Pure Updating blocks compared to Perseveration-Inhibition blocks. No other effects reached significance.
+The 3-way interaction between Trial, Set Type and Block Type from thee previous two experiments was replicated (*B* = `r results1.3.1$beta[12]`, *SE*=`r results1.3.1$se[12]`, *t*(`r results1.3.1$df[12]`)=`r results1.3.1$tval[12]` *p*=`r results1.3.1$pval[12]`). As shown in Figure\ \@ref(fig:getRTfigs)B, following an attention shift, RTs are initially slower but decline more steeply on Pure Updating blocks compared to Perseveration-Inhibition blocks. No other effects reached significance.
 
 (ref:capModelj) Model estimates of error rate across conditions of the attention shifting task in Experiment 3. Error bars represent the 95% confidence interval (CI). Replicating the previous two experiments, the interaction between Block Type, Set Type, and Congruence indicates that participants were more error-prone on Incongruent trials in Perseveration-Inhibition blocks when they have recently switched (i.e. on Switch Sets).
 
-```{r figModelj, echo=FALSE, message=FALSE, out.width='100%', fig.cap='(ref:capModelj)'}
+```{r figModelj, echo=FALSE, message=FALSE, include=FALSE, out.width='100%', fig.cap='(ref:capModelj)'}
 
 figDat1.3.2 <- getFigDat_ER(model1.3.2)
 
 figDat1.3.2 <- convertFigValues_ER(figDat1.3.2)
 
-p=ggplot(figDat1.3.2, aes(x=Trial, y=eRate, linetype=Congruent, shape=Congruent))+
-  geom_line() +
-  geom_point () +
-  facet_grid(switchSet~Blocktype) +
-  scale_linetype_discrete(name='Congruence') +
-  scale_shape_discrete(name='Congruence') +
-  labs(x='Trial', y='Error Rate (%)')
-p+theme_apa()+geom_pointrange(aes(ymin = plo, ymax = phi))
+figDat1.3.2 <- group_by(figDat1.3.2, Blocktype, Congruent, switchSet) %>%
+  summarise(meanErate=mean(eRate, na.rm=TRUE),
+            meanplo=mean(plo, na.rm=TRUE),
+            meanphi=mean(phi, na.rm=TRUE),
+            meantlo=mean(tlo, na.rm=TRUE),
+            meanthi=mean(thi, na.rm=TRUE))
+
+levels(figDat1.3.2$switchSet) <- gsub(" ", "\n", levels(figDat1.3.2$switchSet))
+
+limits = aes(ymax = meanphi, ymin=meanplo)
+dodge = position_dodge(width=0.9)
+
+s=ggplot(figDat1.3.2, aes(x = switchSet, y = meanErate, fill = Congruent))+
+  geom_bar(stat='identity', position=dodge)+
+  facet_grid(.~Blocktype) +
+  geom_errorbar(limits, position=dodge, width=0)+
+  scale_fill_manual(values=c('grey53','grey25'),
+                    name="Congruence",
+                    breaks=c("Congruent", "Incongruent"),
+                    labels=c("Congruent", "Incongruent")) +
+  ylab('Error Rate (ms)')+
+  xlab('Block Type') +
+  coord_cartesian(ylim=c(0,15))
+
+s+theme_apa()
 
 ```
 
-**Error Rate.** The null model had an ICC of `r icc0.3.2`. In the prediction model, unlike in the previous experiments, the main effect of Congruence did not reach significance (*B* = `r results1.3.2$beta[5]`, *SE*=`r results1.3.2$se[5]`, *t*(`r results1.3.2$df[5]`)=`r results1.3.2$tval[5]` *p*=`r results1.3.2$pval[5]`), however it was in a consistent direction. The only other effect of note was the 3-way interaction between Block Type, Set Type, and Congruence (*B* = `r results1.3.2$beta[15]`, *SE*=`r results1.3.2$se[15]`, *t*(`r results1.3.2$df[15]`)=`r results1.3.2$tval[15]` *p*=`r results1.3.2$pval[15]`). This effect (Figure\ \@ref(fig:figModelj)) is consistent with the other experiments, and indicates that on Switch Sets in Perseveration-Inhibition blocks, there was a larger error cost of Incongruent trials, compared to Switch Sets in Pure Updating blocks.
+**Error Rate.** The null model had an ICC of `r icc0.3.2`. In the prediction model, unlike in the previous experiments, the main effect of Congruence did not reach significance (*B* = `r results1.3.2$beta[5]`, *SE*=`r results1.3.2$se[5]`, *t*(`r results1.3.2$df[5]`)=`r results1.3.2$tval[5]` *p*=`r results1.3.2$pval[5]`), however its direct was consistent with the prior experiments. The only other effect of note was the 3-way interaction between Block Type, Set Type, and Congruence (*B* = `r results1.3.2$beta[15]`, *SE*=`r results1.3.2$se[15]`, *t*(`r results1.3.2$df[15]`)=`r results1.3.2$tval[15]` *p*=`r results1.3.2$pval[15]`). This effect (Figure\ \@ref(fig:getERfigs)B) is consistent with the other experiments, and indicates that on Switch Sets in Perseveration-Inhibition blocks, there was a larger error cost of Incongruent trials, compared to Switch Sets in Pure Updating blocks.
 
 # Discussion
-Increasing the pace of the task in Experiment 3 led to results that were largely consistent with those of the previous experiments, with a few exceptions. In particular, participants did not respond more slowly overall on Perseveration-Inhibition blocks, nor did they make more errors overall on Incongruent trials, both of which have been observed in the other experiments. Thus, it is possible that these effects are dependent on a slower-paced task in which participants may be more prone to attentional lapses. On the other hand, the key 3-way observed in the prior experiments were also present here: In the context of Switch Sets within Perseveration-Inhibition blocks, participants still showed a slower reduction in RTs across trials, and had higher incongruence costs in error rate. Thus, these latter effects are unlikely to be the result of the slower task pace in the prior experiments.
+Increasing the pace of the task in Experiment 3 led to results that were largely consistent with those of the previous experiments, with a few exceptions. In particular, participants did not respond more slowly overall on Perseveration-Inhibition blocks, nor did they make more errors overall on Incongruent trials, both of which have been observed in the other experiments. Thus, it is possible that these effects are dependent on a slower-paced task in which participants may be more prone to attentional lapses. On the other hand, the key 3-way interactions observed in the prior experiments were also present here: In the context of Switch Sets within Perseveration-Inhibition blocks, participants still showed a slower reduction in RTs across trials, and had higher incongruence costs in error rate. Thus, these latter effects are unlikely to be the result of the slower task pace in the prior experiments.
 
 # Experiment 4
-
+In this final experiment, we tested in a large sample whether the EBR-linked effects from Experiment 1 replicated after some of its limitations were addressed, by including Non-Switch cues and a longer EBR baseline period of 5 minutes. Additionally, Experiment 4 allowed us to test whether the findings of Experiment 2 replicate, and in particular those that diverged from Experiment 1. 
 
 # Method
 ```{r pull info for method of Study 4, include=FALSE}
@@ -2029,41 +2138,68 @@ results1.4.2 <- getFormattedResults(results1.4.2)
 
 (ref:capModelk) Model estimates of RT across conditionss of the attention shifting task in Experiment 4. Error bars represent the 95% confidence interval (CI). The main behavioral finding was again replicated: RTs asymptote more gradually over the course of a set on Perseveration-Inhibition blocks, on sets in which participants have recently switched (i.e. Switch Sets).
 
-```{r figModelk, echo=FALSE, message=FALSE, out.width='100%', fig.cap='(ref:capModelk)'}
+```{r figModelk, echo=FALSE, message=FALSE, include=FALSE, out.width='100%', fig.cap='(ref:capModelk)'}
 
 figDat1.4.1 <- getFigDat_RT(model1.4.1)
 figDat1.4.1 <- convertFigValues_RT(figDat1.4.1)
 
-p=ggplot(figDat1.4.1, aes(x=Trial, y=RT, shape=switchSet))+
-  geom_line(aes(x=Trial, y=RT, linetype=switchSet)) +
-  facet_grid(Congruent~Blocktype) +
+figDat1.4.1 <- group_by(figDat1.4.1, Trial, switchSet, Blocktype) %>%
+  summarise(meanRT=mean(RT, na.rm=TRUE),
+            meanploRT=mean(ploRT, na.rm=TRUE),
+            meanphiRT=mean(phiRT, na.rm=TRUE),
+            meantloRT=mean(tloRT, na.rm=TRUE),
+            meanthiRT=mean(thiRT, na.rm=TRUE))
+
+p=ggplot(figDat1.4.1, aes(x=Trial, y=meanRT, shape=switchSet))+
+  geom_line(aes(x=Trial, y=meanRT, linetype=switchSet)) +
+  facet_grid(.~Blocktype) +
   scale_linetype_discrete(name='Set Type') +
   scale_shape_discrete(name='Set Type') +
-  labs(x='Trial', y='RT (ms)')
-p+theme_apa()+geom_pointrange(aes(ymin = ploRT, ymax = phiRT))
+  labs(x='Trial', y='RT (ms)') +
+  coord_cartesian(ylim=c(640,860))
+p+theme_apa()+geom_pointrange(aes(ymin = meanploRT, ymax = meanphiRT))
+
 ```
-**RT.** The null model had an ICC of `r icc0.4.1`. From the prediction model, the main effects were largely as expected, with participants responding more quickly on later trials (*B* = `r results1.4.1$beta[2]`, *SE*=`r results1.4.1$se[2]`, *t*(`r results1.4.1$df[2]`)=`r results1.4.1$tval[2]` *p*=`r results1.4.1$pval[2]`), Non-Switch Sets (*B* = `r results1.4.1$beta[4]`, *SE*=`r results1.4.1$se[4]`, *t*(`r results1.4.1$df[4]`)=`r results1.4.1$tval[4]` *p*=`r results1.4.1$pval[4]`), Pure Updating blocks (*B* = `r results1.4.1$beta[3]`, *SE*=`r results1.4.1$se[3]`, *t*(`r results1.4.1$df[3]`)=`r results1.4.1$tval[3]` *p*=`r results1.4.1$pval[3]`), and Congruent trials (*B* = `r results1.4.1$beta[5]`, *SE*=`r results1.4.1$se[5]`, *t*(`r results1.4.1$df[5]`)=`r results1.4.1$tval[5]` *p*=`r results1.4.1$pval[5]`). The 2-way interaction between Trial and Set Type (*B* = `r results1.4.1$beta[7]`, *SE*=`r results1.4.1$se[7]`, *t*(`r results1.4.1$df[7]`)=`r results1.4.1$tval[7]` *p*=`r results1.4.1$pval[7]`) again indicated switch cost, with participants responding more slowly on early trials of Non-Switch Sets. Finally, the consistent effect from the previous experiments was replicated here (Figure\ \@ref(fig:figModelk)), as indicated by the 3-way interaction between between Trial, Block Type, and Set Type reached (*B* = `r results1.4.1$beta[12]`, *SE*=`r results1.4.1$se[12]`, *t*(`r results1.4.1$df[12]`)=`r results1.4.1$tval[12]` *p*=`r results1.4.1$pval[12]`).
+**RT.** The null model had an ICC of `r icc0.4.1`. From the prediction model, the main effects were largely as expected, with participants responding more quickly on later trials (*B* = `r results1.4.1$beta[2]`, *SE*=`r results1.4.1$se[2]`, *t*(`r results1.4.1$df[2]`)=`r results1.4.1$tval[2]` *p*=`r results1.4.1$pval[2]`), Non-Switch Sets (*B* = `r results1.4.1$beta[4]`, *SE*=`r results1.4.1$se[4]`, *t*(`r results1.4.1$df[4]`)=`r results1.4.1$tval[4]` *p*=`r results1.4.1$pval[4]`), Pure Updating blocks (*B* = `r results1.4.1$beta[3]`, *SE*=`r results1.4.1$se[3]`, *t*(`r results1.4.1$df[3]`)=`r results1.4.1$tval[3]` *p*=`r results1.4.1$pval[3]`), and Congruent trials (*B* = `r results1.4.1$beta[5]`, *SE*=`r results1.4.1$se[5]`, *t*(`r results1.4.1$df[5]`)=`r results1.4.1$tval[5]` *p*=`r results1.4.1$pval[5]`). The 2-way interaction between Trial and Set Type (*B* = `r results1.4.1$beta[7]`, *SE*=`r results1.4.1$se[7]`, *t*(`r results1.4.1$df[7]`)=`r results1.4.1$tval[7]` *p*=`r results1.4.1$pval[7]`) again indicated switch cost, with participants responding more slowly on early trials of Non-Switch Sets. Finally, the consistent effect from the previous experiments was replicated here (Figure\ \@ref(fig:getRTfigs)C), as indicated by the 3-way interaction between between Trial, Block Type, and Set Type reached (*B* = `r results1.4.1$beta[12]`, *SE*=`r results1.4.1$se[12]`, *t*(`r results1.4.1$df[12]`)=`r results1.4.1$tval[12]` *p*=`r results1.4.1$pval[12]`).
 
 (ref:capModell) Model estimates of error rate across conditions of the attention shifting task in Experiment 4. Error bars represent the 95% confidence interval (CI). The interaction between Block Type, Set Type, and Congruence was again replicated, indicating that participants were most susceptible to making errors on Incongruent trials in Perseveration-Blocks on sets in which they have recently switched.
 
-```{r figModell, echo=FALSE, message=FALSE, out.width='100%', fig.cap='(ref:capModell)'}
+```{r figModell, echo=FALSE, message=FALSE, include=FALSE, out.width='100%', fig.cap='(ref:capModell)'}
 
 figDat1.4.2 <- getFigDat_ER(model1.4.2)
 
 figDat1.4.2 <- convertFigValues_ER(figDat1.4.2)
 
-p=ggplot(figDat1.4.2, aes(x=Trial, y=eRate, linetype=Congruent, shape=Congruent))+
-  geom_line() +
-  geom_point () +
-  facet_grid(switchSet~Blocktype) +
-  scale_linetype_discrete(name='Congruence') +
-  scale_shape_discrete(name='Congruence') +
-  labs(x='Trial', y='Error Rate (%)')
-p+theme_apa()+geom_pointrange(aes(ymin = plo, ymax = phi))
+figDat1.4.2 <- group_by(figDat1.4.2, Blocktype, Congruent, switchSet) %>%
+  summarise(meanErate=mean(eRate, na.rm=TRUE),
+            meanplo=mean(plo, na.rm=TRUE),
+            meanphi=mean(phi, na.rm=TRUE),
+            meantlo=mean(tlo, na.rm=TRUE),
+            meanthi=mean(thi, na.rm=TRUE))
+
+levels(figDat1.4.2$switchSet) <- gsub(" ", "\n", levels(figDat1.4.2$switchSet))
+
+
+limits = aes(ymax = meanphi, ymin=meanplo)
+dodge = position_dodge(width=0.9)
+
+s=ggplot(figDat1.4.2, aes(x = switchSet, y = meanErate, fill = Congruent))+
+  geom_bar(stat='identity', position=dodge)+
+  facet_grid(.~Blocktype) +
+  geom_errorbar(limits, position=dodge, width=0)+
+  scale_fill_manual(values=c('grey53','grey25'),
+                    name="Congruence",
+                    breaks=c("Congruent", "Incongruent"),
+                    labels=c("Congruent", "Incongruent")) +
+  ylab('Error Rate (ms)')+
+  xlab('Block Type') +
+  coord_cartesian(ylim=c(0,15))
+
+s+theme_apa()
 
 ```
 
-**Error Rate.** Between-subject variability in error rate was `r icc0.4.1`%. In the prediction model, there were main effects of Set Type (*B* = `r results1.4.2$beta[4]`, *SE*=`r results1.4.2$se[4]`, *t*(`r results1.4.2$df[4]`)=`r results1.4.2$tval[4]` *p*=`r results1.4.2$pval[4]`) and Congruence (*B* = `r results1.4.2$beta[5]`, *SE*=`r results1.4.2$se[5]`, *t*(`r results1.4.2$df[5]`)=`r results1.4.2$tval[5]` *p*=`r results1.4.2$pval[5]`). There was additionally a 2-way interaction between Set Type and Congruence (*B* = `r results1.4.2$beta[11]`, *SE*=`r results1.4.2$se[11]`, *t*(`r results1.4.2$df[11]`)=`r results1.4.2$tval[11]` *p*=`r results1.4.2$pval[11]`), within the context of the consistent 3-way interaction between Set Type, Block Type, and Congruence from the prior studies was again replicated here (*B* = `r results1.4.2$beta[15]`, *SE*=`r results1.4.2$se[15]`, *t*(`r results1.4.2$df[15]`)=`r results1.4.2$tval[15]` *p*=`r results1.4.2$pval[15]`). Incongruence costs in error rates were greater on Switch Sets, and this effect is driven largely by Perseveration-Inhibition blocks (Figure\ \@ref(fig:figModell)).
+**Error Rate.** Between-subject variability in error rate was `r icc0.4.1`%. In the prediction model, there were main effects of Set Type (*B* = `r results1.4.2$beta[4]`, *SE*=`r results1.4.2$se[4]`, *t*(`r results1.4.2$df[4]`)=`r results1.4.2$tval[4]` *p*=`r results1.4.2$pval[4]`) and Congruence (*B* = `r results1.4.2$beta[5]`, *SE*=`r results1.4.2$se[5]`, *t*(`r results1.4.2$df[5]`)=`r results1.4.2$tval[5]` *p*=`r results1.4.2$pval[5]`). There was additionally a 2-way interaction between Set Type and Congruence (*B* = `r results1.4.2$beta[11]`, *SE*=`r results1.4.2$se[11]`, *t*(`r results1.4.2$df[11]`)=`r results1.4.2$tval[11]` *p*=`r results1.4.2$pval[11]`), within the context of the consistent 3-way interaction between Set Type, Block Type, and Congruence from the prior studies, which was again replicated here (*B* = `r results1.4.2$beta[15]`, *SE*=`r results1.4.2$se[15]`, *t*(`r results1.4.2$df[15]`)=`r results1.4.2$tval[15]` *p*=`r results1.4.2$pval[15]`). Incongruence costs in error rates were greater on Switch Sets, and this effect is driven largely by Perseveration-Inhibition blocks (Figure\ \@ref(fig:getERfigs)C).
 
 ## Eyetracking Results (*N*=`r Ngaze4`)
 ```{r Study 4 eyetracking results, include=FALSE}
@@ -2170,7 +2306,7 @@ results4.4.1a <- getFormattedResults(results4.4.1a)
 
 ```
 
-**Quality Checks.** In this experiment, the likelihood of fixating the target did not change as a function of time on task (*t*(`r results0.4.3$df[2]`)=`r results0.4.3$tval[2]` *p*=*n.s.*). Similar to Experiment 1, greater target fixation probability predicted significantly fewer errors (*B* = `r results0.4.5$beta[2]`, *SE*=`r results0.4.5$se[2]`, *t*(`r model0.4.4$df.residual`)=`r results0.4.5$tval[2]` *p*=`r results0.4.5$pval[2]`) and marginally faster RTs (*B* = `r results0.4.5$beta[2]`, *SE*=`r results0.4.5$se[2]`, *t*(`r model0.4.5$df.residual`)=`r results0.4.5$tval[2]` *p*=`r results0.4.5$pval[2]`). This finding supports the validity of our assumption that higher target fixation probability is predictive of better, not worse or less efficient, performance.
+**Quality Checks.** In this experiment, the likelihood of fixating the target did not change as a function of time on task (*t*(`r results0.4.3$df[2]`)=`r results0.4.3$tval[2]` *p*=*n.s.*). Similar to Experiment 1, greater target fixation probability predicted significantly fewer errors (*B* = `r results0.4.5$beta[2]`, *SE*=`r results0.4.5$se[2]`, *t*(`r model0.4.4$df.residual`)=`r results0.4.5$tval[2]` *p*=`r results0.4.5$pval[2]`) and marginally faster RTs (*B* = `r results0.4.4$beta[2]`, *SE*=`r results0.4.4$se[2]`, *t*(`r model0.4.4$df.residual`)=`r results0.4.4$tval[2]` *p*=`r results0.4.4$pval[2]`). This finding supports the validity of our assumption that higher target fixation probability is predictive of better, not worse or less efficient, performance.
 
 (ref:capModelm) Model estimates of distractor fixation probability on the attention shifting task in Experiment 4. Error bars represent the 95% confidence interval (CI). The interaction between Block Type and Set Type reached significance, indicating that participants were more likely to fixate on the distractor on Switch Sets of Perseveration-Inhibition blocks.
 
@@ -2238,7 +2374,8 @@ p=ggplot(figDat4.4.1, aes(x=Trial, y=firstTarSacc_relOnsetTime, shape=switchSet)
   facet_grid(Congruent~Blocktype) +
   scale_linetype_discrete(name='Set Type') +
   scale_shape_discrete(name='Set Type') +
-  labs(x='Trial', y='Time of First Saccade to Target (ms)')
+  labs(x='Trial', y='Time of First Saccade to Target (ms)') +
+  coord_cartesian(ylim=c(220,290))
 p+theme_apa()+geom_pointrange(aes(ymin = plo, ymax = phi))
 ```
 
@@ -2421,7 +2558,7 @@ results10.4.1 <- getFormattedResults(results10.4.1)
 
 (ref:capModelo) Model estimates of RT as a function of EBR, Block Type, and Set Type in Experiment 4.  Error bars represent the 95% confidence interval (CI). Similar to Experiment 1, on Switch Sets, participants with higher EBR showed an increased RT cost on Perseveration-Inhibition blocks relative to Pure Updating blocks.
 
-```{r figModelo, echo=FALSE, message=FALSE, out.width='100%', fig.cap='(ref:capModelo)'}
+```{r figModelo, echo=FALSE, message=FALSE, include=FALSE, out.width='100%', fig.cap='(ref:capModelo)'}
 
 getFigDat_EBR <- function(model) {
   
@@ -2486,7 +2623,7 @@ p+theme_apa()+geom_pointrange(aes(ymin = meanploRT, ymax = meanphiRT))
 
 (ref:capModelp) Model estimates of RT as a function of EBR, Set Type, Congruence, and Trial in Experiment 4. Error bars represent the 95% confidence interval (CI). There was a marginally significant interaction among these factors.
 
-```{r figModelp, echo=FALSE, message=FALSE, out.width='100%', fig.cap='(ref:capModelp)'}
+```{r figModelp, echo=FALSE, message=FALSE, include=FALSE, out.width='100%', fig.cap='(ref:capModelp)'}
 
 getFigDat_EBR <- function(model, blinkInfo) {
   ebrLow <- 0-blinkInfo$sdEBR
@@ -2543,13 +2680,13 @@ p+theme_apa()+geom_pointrange(aes(ymin = meanplo, ymax = meanphi))
 ```
 All EBR analyses were run both with and without a Gender factor. In the current sample, there were no gender differences in EBR (Females: *M*=`r blinksByGender4$meanEBR[1]`, *SD*=`r blinksByGender4$sdEBR[1]`; Males: *M*=`r blinksByGender4$meanEBR[2]`, *SD*=`r blinksByGender4$sdEBR[2]`; *t*(`r round(gd4$parameter, digits=2)`)=`r round(gd4$statistic, digits=2)`, *p*=`r round(gd$p.value, digits=3)`). It is important to note, however, that the proportion of males in the sample was very small (`r (demog4$numMales/(demog4$numMales+demog4$numFemales+demog4$numOther))*100`%).
 
-**RT.** EBR had no main effect on RT (without Gender: *B*=`r results5.4.1$beta[6]`, *SE*=`r results5.4.1$se[6]`, *t*(`r results5.4.1$df[6]`)=`r results5.4.1$tval[6]` *p*=`r results5.4.1$pval[6]` with Gender:*B*=`r results6.4.1$beta[6]`, *SE*=`r results6.4.1$se[6]`, *t*(`r results6.4.1$df[6]`)=`r results6.4.1$tval[6]` *p*=`r results6.4.1$pval[6]`). The interaction between EBR and Blocktype, which was observed in Experiment 1, was also non-significant here (without Gender: *t*(`r results5.4.1$df[14]`)=`r results5.4.1$tval[14]` *p*=`r results5.4.1$pval[14]`; with Gender: *t*(`r results6.4.1$df[15]`)=`r results6.4.1$tval[15]` *p*=`r results6.4.1$pval[15]`). However, given that Experiment 1 did not have a Set Type factor, the interaction between Block Type, Set Type, and EBR was also of interest here. While this effect was in the predicted direction, it reached only marginal significance, and that only in the model without Gender (without Gender: *B*=`r results5.4.1$beta[23]`, *SE*=`r results5.4.1$se[23]`, *t*(`r results5.4.1$df[23]`)=`r results5.4.1$tval[23]` *p*=`r results5.4.1$pval[23]` with Gender:*B*=`r results6.4.1$beta[29]`, *SE*=`r results6.4.1$se[29]`, *t*(`r results6.4.1$df[29]`)=`r results6.4.1$tval[29]` *p*=`r results6.4.1$pval[29]`). When a post-hoc model was run to examine specifically the effects of EBR, Block Type, Set Type, and Trial on RT, the effect did reach significance in both models (without Gender: *B*=`r results5.4.1a$beta[8]`, *SE*=`r results5.4.1a$se[8]`, *t*(`r results5.4.1a$df[8]`)=`r results5.4.1a$tval[8]` *p*=`r results5.4.1a$pval[8]` with Gender:*B*=`r results6.4.1a$beta[12]`, *SE*=`r results6.4.1a$se[12]`, *t*(`r results6.4.1a$df[12]`)=`r results6.4.1a$tval[12]` *p*=`r results6.4.1a$pval[29]`). As shown in Figure\ \@ref(fig:figModelo), higher EBR predicts greater divergence between Perseveration-Inhibition and Pure Updating blocks, specifically on Switch Sets. This result is broadly consistent with the findings of Experiment 1, in which there were no Non-Switch Sets.  
+**RT.** EBR had no main effect on RT (without Gender: *B*=`r results5.4.1$beta[6]`, *SE*=`r results5.4.1$se[6]`, *t*(`r results5.4.1$df[6]`)=`r results5.4.1$tval[6]` *p*=`r results5.4.1$pval[6]` with Gender:*B*=`r results6.4.1$beta[6]`, *SE*=`r results6.4.1$se[6]`, *t*(`r results6.4.1$df[6]`)=`r results6.4.1$tval[6]` *p*=`r results6.4.1$pval[6]`). The interaction between EBR and Blocktype, which was observed in Experiment 1, was also non-significant here (without Gender: *t*(`r results5.4.1$df[14]`)=`r results5.4.1$tval[14]` *p*=`r results5.4.1$pval[14]`; with Gender: *t*(`r results6.4.1$df[15]`)=`r results6.4.1$tval[15]` *p*=`r results6.4.1$pval[15]`). However, given that Experiment 1 did not have a Set Type factor, the interaction between Block Type, Set Type, and EBR was also of interest here. While this effect was in the predicted direction, it reached only marginal significance, and that only in the model without Gender (without Gender: *B*=`r results5.4.1$beta[23]`, *SE*=`r results5.4.1$se[23]`, *t*(`r results5.4.1$df[23]`)=`r results5.4.1$tval[23]` *p*=`r results5.4.1$pval[23]` with Gender:*B*=`r results6.4.1$beta[29]`, *SE*=`r results6.4.1$se[29]`, *t*(`r results6.4.1$df[29]`)=`r results6.4.1$tval[29]` *p*=`r results6.4.1$pval[29]`). When a post-hoc model was run to examine specifically the effects of EBR, Block Type, Set Type, and Trial on RT, the effect did reach significance in both models (without Gender: *B*=`r results5.4.1a$beta[15]`, *SE*=`r results5.4.1a$se[15]`, *t*(`r results5.4.1a$df[15]`)=`r results5.4.1a$tval[15]` *p*=`r results5.4.1a$pval[15]` with Gender:*B*=`r results6.4.1a$beta[20]`, *SE*=`r results6.4.1a$se[20]`, *t*(`r results6.4.1a$df[20]`)=`r results6.4.1a$tval[20]` *p*=`r results6.4.1a$pval[20]`). As shown in Figure\ \@ref(fig:getEBRfigs)B, higher EBR predicts greater divergence between Perseveration-Inhibition and Pure Updating blocks, specifically on Switch Sets. This result is broadly consistent with the findings of Experiment 1, in which there were no Non-Switch Sets.  
 
-In the initial model, the only other effect of note was a marginally significant interaction between Trial, Set Type, Congruence, and EBR (without Gender: *B*=`r results5.4.1$beta[30]`, *SE*=`r results5.4.1$se[30]`, *t*(`r results5.4.1$df[30]`)=`r results5.4.1$tval[30]` *p*=`r results5.4.1$pval[30]` with Gender:*B*=`r results6.4.1$beta[46]`, *SE*=`r results6.4.1$se[46]`, *t*(`r results6.4.1$df[46]`)=`r results6.4.1$tval[46]` *p*=`r results6.4.1$pval[46]`). As shown in Figure\ \@ref(fig:figModelp), higher EBR appears to predict slightly slower RTs overall; however on Switch Sets, the effect of EBR on RT is greatest at the beginning of sets for Incongruent trials, but at the end of sets for Congruent trials.
+In the initial model, the only other effect of note was a marginally significant interaction between Trial, Set Type, Congruence, and EBR (without Gender: *B*=`r results5.4.1$beta[30]`, *SE*=`r results5.4.1$se[30]`, *t*(`r results5.4.1$df[30]`)=`r results5.4.1$tval[30]` *p*=`r results5.4.1$pval[30]` with Gender:*B*=`r results6.4.1$beta[46]`, *SE*=`r results6.4.1$se[46]`, *t*(`r results6.4.1$df[46]`)=`r results6.4.1$tval[46]` *p*=`r results6.4.1$pval[46]`). Here, higher EBR appears to predict slightly slower RTs overall; however on Switch Sets, the effect of EBR on RT is greatest at the beginning of sets for Incongruent trials, but at the end of sets for Congruent trials.
 
 (ref:capModelq) Model estimates of error rate as a function of EBR, Block Type, Congruence, and Trial in Experiment 4. Error bars represent the 95% confidence interval (CI). There was a marginally significant interaction among these factors, indicating that EBR modulates errors to a greatest extent on early trials of Perseveration-Inhibition blocks, and that the direction of this modulation depends on the Congruence between target and distractor.
 
-```{r figModelq, echo=FALSE, message=FALSE, out.width='100%', fig.cap='(ref:capModelq)'}
+```{r figModelq, echo=FALSE, message=FALSE, include=FALSE, out.width='100%', fig.cap='(ref:capModelq)'}
 getFigDat_EBR_ER <- function(model, blinkInfo) {
   ebrLow <- 0-blinkInfo$sdEBR
   ebrHigh <- blinkInfo$sdEBR
@@ -2610,11 +2747,11 @@ p=ggplot(figDat5.4.2, aes(x=Trial, y=meaneRate, linetype=ebr, shape=ebr))+
 p+theme_apa()+geom_pointrange(aes(ymin = meanplo, ymax = meanphi))
 ```
 
-**Error Rate.** In the model predicting error rate, the only EBR-linked effect to approach significance was an interaction between Trial, Block Type, Congruence, and EBR (without Gender: *B*=`r results5.4.2$beta[28]`, *SE*=`r results5.4.2$se[28]`, *t*(`r results5.4.2$df[28]`)=`r results5.4.2$tval[28]` *p*=`r results5.4.2$pval[28]` with Gender:*B*=`r results6.4.2$beta[44]`, *SE*=`r results6.4.2$se[44]`, *t*(`r results6.4.2$df[44]`)=`r results6.4.2$tval[44]` *p*=`r results6.4.2$pval[44]`). As shown in Figure\ \@ref(fig:figModelq), EBR appears to be most relevant for errors on Incongruent trials of Perseveration-Inhibition blocks that come earlier in a set. On such trials, higher EBR predicts a higher error rate.
+**Error Rate.** In the model predicting error rate, the only EBR-linked effect to approach significance was an interaction between Trial, Block Type, Congruence, and EBR (without Gender: *B*=`r results5.4.2$beta[28]`, *SE*=`r results5.4.2$se[28]`, *t*(`r results5.4.2$df[28]`)=`r results5.4.2$tval[28]` *p*=`r results5.4.2$pval[28]` with Gender:*B*=`r results6.4.2$beta[44]`, *SE*=`r results6.4.2$se[44]`, *t*(`r results6.4.2$df[44]`)=`r results6.4.2$tval[44]` *p*=`r results6.4.2$pval[44]`). EBR appears to be most relevant for errors on Incongruent trials of Perseveration-Inhibition blocks that come earlier in a set. On such trials, higher EBR predicts a higher error rate.
 
 (ref:capModelr) Model estimates of distractor fixation probability as a function of EBR, Block Type, Set Type, and Trial. Error bars represent the 95% confidence interval (CI). The interaction between these factors reached marginal significance, and suggests that EBR modulates distractor fixation on later trials of Switch Sets in Perseveration-Inhibition blocks, such that individuals with high EBR show a steeper improvement across trials.
 
-```{r figModelr, echo=FALSE, message=FALSE, out.width='100%', fig.cap='(ref:capModelr)'}
+```{r figModelr, echo=FALSE, message=FALSE, include=FALSE, out.width='100%', fig.cap='(ref:capModelr)'}
 
 getFigDat_EBR_df <- function(model, blinkInfo) {
   ebrLow <- 0-blinkInfo$sdEBR
@@ -2672,7 +2809,7 @@ p+theme_apa()+geom_pointrange(aes(ymin = meanplo, ymax = meanphi))
 
 ```
 
-**Distractor Fixation Probability (*N*=`r NebrGaze4`).** Next, we examined whether EBR modulates the relationship between task conditions and eye gaze measures. In the models predicting distractor fixations, the only effect of note was a marginally significant interaction between Trial, Set Type, Block Type, and EBR (without Gender: *B*=`r results7.4.1$beta[29]`, *SE*=`r results7.4.1$se[29]`, *t*(`r results7.4.1$df[29]`)=`r results7.4.1$tval[29]` *p*=`r results7.4.1$pval[29]` with Gender:*B*=`r results8.4.1$beta[46]`, *SE*=`r results8.4.1$se[46]`, *t*(`r results8.4.1$df[46]`)=`r results8.4.1$tval[46]` *p*=`r results8.4.1$pval[46]`). As shown in Figure\ \@ref(fig:figModelr), relative to low EBR, high EBR appears to be the most costly for distractor fixation on early trials of Perseveration-Inhibition blocks. 
+**Distractor Fixation Probability (*N*=`r NebrGaze4`).** Next, we examined whether EBR modulates the relationship between task conditions and eye gaze measures. In the models predicting distractor fixations, the only effect of note was a marginally significant interaction between Trial, Set Type, Block Type, and EBR (without Gender: *B*=`r results7.4.1$beta[29]`, *SE*=`r results7.4.1$se[29]`, *t*(`r results7.4.1$df[29]`)=`r results7.4.1$tval[29]` *p*=`r results7.4.1$pval[29]` with Gender:*B*=`r results8.4.1$beta[46]`, *SE*=`r results8.4.1$se[46]`, *t*(`r results8.4.1$df[46]`)=`r results8.4.1$tval[46]` *p*=`r results8.4.1$pval[46]`). Relative to low EBR, high EBR appears to be the most costly for distractor fixation on early trials of Perseveration-Inhibition blocks. 
 
 **Saccade Time (*N*=`r NebrGaze1`).** The final models examined whether EBR modulated the effects of task on the timing of participants' first saccade to the target; however no EBR-linked effects reached significance. 
 
@@ -2805,13 +2942,13 @@ modelt4 <- lmer(T1 ~ T4*Blocktype*switchSet +
 In a series of experiments, we examined WM updating performance on a novel variant of the attention shifting task, in which the updating context varied as a function of the familiarity of target and distractor stimuli (both familiar in Perseveration-Inhibition; both novel in Pure Updating). Additionally, we tested the relationship between EBR, an index of striatal DA, and WM updating ability across these contexts.  
 The behavioral findings were highly consistent across experiments. As expected, participants were slower and more error-prone on Perseveration-Inhibition blocks overall. In this condition, RTs asymptoted more slowly following updating, indicating that participants required more trials to adjust to the new attentional set. Participants were also more susceptible to interference by distraction throughout a set in which they had recently switched, as indexed by an overall higher error rate on Incongruent trials in the Perseveration-Inhibition condition. Taken together, these findings suggest that on Perseveration-Inhibition blocks, an inability to completely disengage from the previous attentional set interfered with performance, and that this interference persisted for at least 4 trials following WM updating. Performance in the Perseveration-Inhibition condition thus reflects both the extent to which an individual has disengaged from the previous attentional set, as well as their engagement with the new attentional set. In the Pure Updating condition, on the other hand, disengagement from a previous attentional set is not relevant to performance, and thus it is a purer index of engagement with a new attentional set. 
 
-Interestingly, in spite of overall better performance on Pure Updating blocks, in 3 of 4 experiments participants responded more slowly on the first trial following an update in this condition. One potential explanation for this finding is that incomplete disengagement from previous task sets in the Perseveration-Inhibition condition may also confer an RT advantage immediately following an update. In particular, re-activation of an attentional set may be faster when it becomes relevant again if it has not been completely disengaged from. In the Pure Updating condition, on the other hand, previously-relevant attentional sets are unlikely to become relevant again, and thus there would be no such advantage. If this were the case, we might expect that following sets on which participants showed high levels of interference, as indexed by slower RTs at the end of a set, they would have faster RTs the first trial following an update, compared with sets on which they showed less interference. We tested this possibility in post-hoc analyses that assessed whether the first RT of a set was predicted by Block Type and the RT of the fourth trial of the previous set. Although RT on the fourth trial consistently predicted RT on the first trial of the following set, this relationship was in the positive direction and did not vary as a function of block. An alternative explanation is that because participants had not recently seen the new target and distractor colors in the Pure Updating condition, perceptual processing of the novel colors was slower in this condition. This explanation is consistent with other work showing colored target detection is faster following recent priming with a visual representation the specific target colour, but that this difference is driven by perceptual, rather than selective attention processes [@WilschutEtAl_2014]. Future work will be needed to more directly test this explanation for the initially slower RTs following updating on Pure Updating blocks in these experiments.  
+Interestingly, in spite of overall better performance on Pure Updating blocks, in 3 of 4 experiments participants responded more slowly on the first trial following an update in this condition. One potential explanation for this finding is that incomplete disengagement from previous task sets in the Perseveration-Inhibition condition may also confer an RT advantage immediately following an update. In particular, re-activation of an attentional set may be faster when it becomes relevant again if it has not been completely disengaged from. In the Pure Updating condition, on the other hand, previously-relevant attentional sets are unlikely to become relevant again, and thus there would be no such advantage. If this were the case, we might expect that following sets on which participants showed high levels of interference, as indexed by slower RTs at the end of a set, they would have faster RTs the first trial following an update, compared with sets on which they showed less interference. We tested this possibility in post-hoc analyses that assessed whether the first RT of a set was predicted by Block Type and the RT of the fourth trial of the previous set. Although RT on the fourth trial consistently predicted RT on the first trial of the following set, this relationship was in the positive direction and did not vary as a function of Block Type. An alternative explanation is that because participants had not recently seen the new target and distractor colors in the Pure Updating condition, perceptual processing of the novel colors was slower in this condition. This explanation is consistent with other work showing colored target detection is faster following recent priming with a visual representation the specific target colour, but that this difference is driven by perceptual, rather than selective attention processes [@WilschutEtAl_2014]. Future work will be needed to more directly test this explanation for the initially slower RTs following updating on Pure Updating blocks in these experiments.  
 
 Participants' eye gaze patterns index behavior independent of response processes, and were thus of interest for better understanding the processes underlying the observed behavioral differences across conditions. Eyetracking results were largely complementary to the RT and error rate findings, although not entirely consistent across experiments. Distractor fixation probability, an overt index of distractibility, was greater on Perseveration-Inhibition blocks, confirming that in this condition, participants were not only slower and more error-prone, but also more likely to look at the to-be-ignored distractor. In Experiment 4, this relationship was strongest on Switch sets. 
 
 The time of participants' first saccade to the target was used as an index of (perhaps) implicit, hesitation to approach the target, on trials in which participants did not first overtly look at the distractor. The results of Experiment 4 closely mirror the main RT finding, indicating that saccades to target on Pure Updating blocks were initially slower following a recent update, but improved over the course of a set, whereas saccade time changed little with each subsequent trial on Perseveration-Inhibition blocks. Based on the results of Experiment 4, the slower adaptation to a new attentional set in Perseveration-Inhibition blocks appears to be driven by both increased tendency to look at the distractor, and a hesitation to look at the target.  
 
-It is important to note, however, that the eye tracking results from Experiment 2 are inconsistent with the above findings. Given its relatively small sample size (*N* Exp. 2=`r Ngaze2`; *N* Exp. 4=`r Ngaze4`), it is possible that Experiment 2 was underpowered to detect these effects. An additional potential explanation is that in Experiment 2, stimuli were presented for only 1000ms, whereas in Experiment 4 stimuli remained on the screen until response. It is possible that this manipulation changed how participants responded to the task, although we note that the RT and Error Rate results were quite similar. Additionally, when trials in which the critical gaze measures (i.e. distractor fixation, saccade to target) occurred after 1000ms were removed, the results of Experiment 4 remained the same.  
+It is important to note, however, that the eye tracking results from Experiment 2 did not show this pattern of increased speed across trials on Switch sets of Pure Updating blocks. Given its relatively small sample size (*N* Exp. 2=`r Ngaze2`; *N* Exp. 4=`r Ngaze4`), it is possible that Experiment 2 was underpowered to detect these effects. An additional potential explanation is that in Experiment 2, stimuli were presented for only 1000ms, whereas in Experiment 4 stimuli remained on the screen until response. It is possible that this manipulation changed how participants responded to the task, although we note that the RT and Error Rate results were quite similar. Additionally, when trials in which the critical gaze measures (i.e. distractor fixation, saccade to target) occurred after 1000ms were removed, the results of Experiment 4 remained the same.  
 
 An additional goal of these experiments was to determine how EBR, an index of striatal DA, is related to WM updating across the different switching contexts. Across experiments, higher EBR consistently predicted slower performance on Perseveration-Inhibition relative to Pure Updating blocks on sets in which participants had recently switched. This finding indicates that poorer updating performance in individuals with high EBR is attributable to increased susceptibility to interference from previously-relevant attentional sets, rather than to poorer activation of a new attentional set. This interference could come in the form of perseveration on the old target color or backwards inhibition of the new target color. Eyetracking measures were of interest for their potential to adjudicate between these two potential sources of interference. Across both experiments, there was no evidence that high EBR was linked with overt attentional capture (i.e. fixation) by distractors. With respect to saccade initiation time, our index of hesitation, the results were not consistent across experiments. 
 
@@ -2823,7 +2960,7 @@ The meaning of these results for our knowledge about WM updating and striatal DA
 
 In the attentional shifting task, poorer performance in the presence of distractors indicates that the task-irrelevant stimuli were, at least to some extent, not effectively prevented from being gated into WM.  When tonic striatal DA is high, D2 pathway activity should be reduced, and thus there should be a reduced threshold required for a phasic signal to gate an item into WM [@MaiaFrank_2011]. The result is facilitated updating, which may also come at the cost of increased distractibility when task-irrelevant stimuli are gated into WM. If EBR is reflective of tonic striatal DA levels, we would expect to see that participants with high EBR are more susceptible to distraction. Critically, however, greater distractibility alone does not explain why participants with high EBR were selectively more distracted in the Perseveration-Inhibition condition compared to the Pure Updating condition, both of which contained distractor stimuli.  
 
-There are two potential explanations for this selectively greater distractibility on Perseveration-Inhibition blocks in subjects with higher EBR. First, it is possible that the Perseveration-Inhibition condition is simply more difficult than the Pure Updating condition, and under these circumstances, EBR-linked effects are more likely to emerge. A second possibility is that EBR is also related to learning processes, which modulates the synaptic weights of target and distractor colors throughout the experiment. The Perseveration-Inhibition condition of this task is analogous to a reversal learning paradigm. Tonic DA at the time of learning can modulate the relative weighting of punishments and rewards in the learning process, with high DA facilitating reward learning and low DA improving punishment learning [@CollinsFrank_2014; @CoolsEtAl_2009]. In our experiment, participants performed the task without explicit rewards, punishment, or feedback; however given that errors and conflict among competing stimuli are intrinsically aversive [@DreisbachFischer_2012], successful learning of task sets would allow participants to avoid these more subtle punishments. If this were the case, we might expect that EBR effects would be modulated by their sensitivity to punishment. This finding is also consistent with other studies showing that participants with low EBR learned more effectively from punishment than those with high EBR [@SlagterEtAl_2015]. In the Pure Updating condition, poorer learning is less likely to result in performance decrements, because previously-relevant stimuli will never be shown at the same time as the target. In future work, it will be important to explicitly account for the potential effect of tonic DA on learning processes, in addition to its role in the implementation of the learned attentional sets.  
+There are two potential explanations for this selectively greater distractibility on Perseveration-Inhibition blocks in subjects with higher EBR. First, it is possible that the Perseveration-Inhibition condition is simply more difficult than the Pure Updating condition, and under these circumstances, EBR-linked effects are more likely to emerge. A second possibility is that EBR (via its link with striatal DA) is also predictive of reinforcement learning processes, which modulate the synaptic weights of target and distractor colors throughout the experiment. The Perseveration-Inhibition condition of this task is analogous to a reversal learning paradigm. Tonic DA at the time of learning can modulate the relative weighting of punishments and rewards in the learning process, with high DA facilitating reward learning and low DA improving punishment learning [@CollinsFrank_2014; @CoolsEtAl_2009]. In our experiment, participants performed the task without explicit rewards, punishment, or feedback; however given that errors and conflict among competing stimuli are intrinsically aversive [@DreisbachFischer_2012], successful learning of task sets would allow participants to avoid these more subtle punishments. Furthermore, other work indicates that participants with low EBR learned more effectively from punishment than those with high EBR [@SlagterEtAl_2015]. In the Pure Updating condition, poorer learning is less likely to result in performance decrements, because previously-relevant stimuli will never be shown at the same time as the target. In future work, it will be important to explicitly account for the potential effect of tonic DA on learning processes, in addition to its role in the implementation of the learned attentional sets.  
 
 Even while acknowledging the uncertainty about the precise neurocognitive processes underlying the observed EBR effects, an important outcome of the present investigation is the result that EBR-linked effects depend on the context of the switch. Rather than modulating the effectiveness of updating processes per se, EBR appears to be linked to the effectiveness with which one is able to disengage from a previous attentional set. Interestingly, many of these EBR-linked effects do not interact with the time since the switch: high EBR participants continued to be slower on Perseveration-Inhibition blocks several trials following updating.  
 
